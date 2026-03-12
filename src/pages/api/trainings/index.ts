@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import trainings from '../../mocks/fixtures/trainings.json';
+import trainings from '../../../mocks/fixtures/trainings.json';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const q = (req.query.q as string | undefined) ?? '';
