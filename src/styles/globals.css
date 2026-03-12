@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #__next {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-linen);
+  color: var(--color-espresso);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Gym-feel hero gradient utility */
+.bg-hero {
+  background: linear-gradient(135deg, var(--color-hero-from) 0%, var(--color-hero-to) 100%);
+}
+
+/* Form input style */
+.field {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid var(--color-khaki);
+  border-radius: 10px;
+  background: white;
+  color: var(--color-espresso);
+  font-size: 0.9rem;
+  outline: none;
+}
+.field:focus {
+  border-color: var(--color-camel);
+  box-shadow: 0 0 0 3px rgba(178,150,125,0.18);
+}
+.field::placeholder { color: rgba(74,52,42,0.35); }

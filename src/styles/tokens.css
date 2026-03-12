@@ -1,0 +1,33 @@
+:root {
+  /* Palette */
+  --color-linen: #F5F1EA;
+  --color-khaki: #D7C9B8;
+  --color-camel: #B2967D;
+  --color-cocoa: #7D5A44;
+  --color-espresso: #4A342A;
+
+  /* Accent */
+  --color-accent: #E86C2C;
+
+  /* Hero gradient stops */
+  --color-hero-from: #2E1D16;
+  --color-hero-to: #6B4A37;
+
+  /* Typography */
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Shadows */
+  --card-shadow: 0 4px 20px rgba(74,52,42,0.10);
+  --card-shadow-dark: 0 8px 32px rgba(20,10,5,0.28);
+  --header-shadow: 0 2px 16px rgba(74,52,42,0.07);
+
+  /* Border radius */
+  --radius-card: 20px;
+  --radius-btn: 999px;
+}
+
+.rounded-card { border-radius: var(--radius-card); }
+
+/* Smooth transitions on interactive elements */
+a, button, input { transition: all 0.18s ease; }
