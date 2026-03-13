@@ -3,9 +3,11 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 const links = [
-  { href: '/student', label: 'Home', exact: true },
-  { href: '/trainings', label: 'Treinos', exact: false },
-  { href: '/schedule', label: 'Agenda', exact: true },
+  { href: '/student',  label: 'Home',      exact: true  },
+  { href: '/trainings',label: 'Treinos',   exact: false },
+  { href: '/schedule', label: 'Agenda',    exact: true  },
+  { href: '/progress', label: 'Progresso', exact: true  },
+  { href: '/profile',  label: 'Perfil',    exact: true  },
 ];
 
 export const Nav: React.FC = () => {

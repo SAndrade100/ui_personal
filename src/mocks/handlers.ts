@@ -2,6 +2,7 @@ import { rest } from 'msw';
 import user from './fixtures/user.json';
 import trainings from './fixtures/trainings.json';
 import schedule from './fixtures/schedule.json';
+import progress from './fixtures/progress.json';
 
 export const handlers = [
   rest.get('/api/user', (req, res, ctx) => {
@@ -29,5 +30,9 @@ export const handlers = [
       ? schedule.filter((s) => s.date.startsWith(month))
       : schedule;
     return res(ctx.status(200), ctx.json(filtered));
-  })
+  }),
+
+  rest.get('/api/progress', (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(progress));
+  }),
 ];
