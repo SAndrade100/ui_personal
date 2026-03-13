@@ -14,18 +14,23 @@ const links = [
   { href: '/profile',    label: 'Perfil',     exact: true  },
 ];
 
-export const Nav: React.FC = () => {
+type Props = { vertical?: boolean; onNavigate?: () => void };
+
+export const Nav: React.FC<Props> = ({ vertical = false, onNavigate }) => {
   const { pathname } = useRouter();
 
   return (
-    <nav className="flex gap-1">
+    <nav className={vertical ? 'flex flex-col gap-1' : 'flex gap-1'}>
       {links.map(({ href, label, exact }) => {
         const active = exact ? pathname === href : pathname.startsWith(href);
         return (
           <Link
             key={href}
             href={href}
-            className={`text-sm font-medium px-3 py-1.5 rounded-full transition-all ${
+            onClick={onNavigate}
+            className={`font-medium px-3 rounded-full transition-all ${
+              vertical ? 'text-base py-2.5' : 'text-sm py-1.5'
+            } ${
               active
                 ? 'bg-[var(--color-accent)] text-white shadow-sm'
                 : 'text-espresso hover:bg-[rgba(178,150,125,0.12)]'
@@ -40,3 +45,4 @@ export const Nav: React.FC = () => {
 };
 
 export default Nav;
+
