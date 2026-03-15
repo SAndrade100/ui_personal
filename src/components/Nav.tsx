@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { useAuth } from '../lib/auth';
 
-const links = [
+const studentLinks = [
   { href: '/student',     label: 'Home',       exact: true  },
   { href: '/trainings',  label: 'Treinos',    exact: false },
   { href: '/schedule',   label: 'Agenda',     exact: true  },
@@ -14,10 +15,20 @@ const links = [
   { href: '/profile',    label: 'Perfil',     exact: true  },
 ];
 
+const trainerLinks = [
+  { href: '/trainer',          label: 'Dashboard', exact: true  },
+  { href: '/trainer/students', label: 'Alunos',    exact: false },
+  { href: '/trainer/trainings',label: 'Treinos',   exact: false },
+  { href: '/trainer/schedule', label: 'Agenda',    exact: true  },
+  { href: '/trainer/chat',     label: 'Chat',      exact: true  },
+];
+
 type Props = { vertical?: boolean; onNavigate?: () => void };
 
 export const Nav: React.FC<Props> = ({ vertical = false, onNavigate }) => {
   const { pathname } = useRouter();
+  const { user } = useAuth();
+  const links = user?.role === 'trainer' ? trainerLinks : studentLinks;
 
   return (
     <nav className={vertical ? 'flex flex-col gap-1' : 'flex gap-1'}>

@@ -8,10 +8,23 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    signin(() => router.push('/student'));
+    setError('');
+    setLoading(true);
+    signin(email, password, (err) => {
+      setLoading(false);
+      if (err) {
+        setError('Email ou senha incorretos.');
+        return;
+      }
+      // role-based redirect handled after /api/auth/me response
+      const isTrainer = email.toLowerCase().includes('trainer') || email.toLowerCase().includes('ana');
+      router.push(isTrainer ? '/trainer' : '/student');
+    });
   };
 
   return (
@@ -89,10 +102,17 @@ export default function Login() {
             />
           </label>
 
-          <Button type="submit" fullWidth>Entrar</Button>
+          <Button type="submit" fullWidth disabled={loading}>
+            {loading ? 'Entrando…' : 'Entrar'}
+          </Button>
+
+          {error && (
+            <p className="text-center text-xs mt-3" style={{ color: '#c0392b' }}>{error}</p>
+          )}
 
           <p className="text-center text-xs mt-4" style={{ color: 'rgba(74,52,42,0.4)' }}>
-            Demo — não é necessário preencher para entrar
+            Trainer: <span style={{ color: 'var(--color-camel)' }}>ana@trainer.com</span> / trainer123<br />
+            Aluno: <span style={{ color: 'var(--color-camel)' }}>bia@example.com</span> / student123
           </p>
         </form>
       </div>
