@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { apiFetch } from '../lib/api';
+import { useRequireAuth } from '../lib/auth';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Measurements = Record<string, number>;
@@ -83,18 +86,18 @@ const skinfoldLabels: Record<string, string> = {
 type Tab = 'latest' | 'evolution';
 
 export default function Assessment() {
+  useRequireAuth('student');
   const [data, setData] = useState<Assessment[]>([]);
   const [tab, setTab] = useState<Tab>('latest');
   const [selIdx, setSelIdx] = useState(0); // for latest tab
 
   useEffect(() => {
-    fetch('/api/assessments')
-      .then((r) => r.json())
-      .then((d: Assessment[]) => { setData(d); setSelIdx(d.length - 1); })
+    apiFetch<Assessment[]>('/api/assessments')
+      .then((d) => { setData(d); setSelIdx(d.length - 1); })
       .catch(() => null);
   }, []);
 
-  const latest = data[selIdx];
+  const latest = data[selIdx] ?? null;
   const dates  = data.map((a) => a.date);
   const fmtDate = (iso: string) => new Date(iso + 'T12:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -133,6 +136,7 @@ export default function Assessment() {
       </div>
 
       <div className="app-container py-8">
+        <ErrorBoundary>
 
         {/* ══ Latest assessment ══ */}
         {tab === 'latest' && latest && (
@@ -281,6 +285,7 @@ export default function Assessment() {
           </div>
         )}
 
+        </ErrorBoundary>
       </div>
     </div>
   );

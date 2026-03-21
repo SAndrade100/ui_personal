@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '../../../../components/Header';
 import Card from '../../../../components/Card';
 import { Button } from '../../../../components/Button';
+import { apiFetch } from '../../../../lib/api';
 
 type MacroKey = 'protein' | 'carbs' | 'fat';
 type FoodItem = { name: string; calories: number; protein: number; carbs: number; fat: number };
@@ -33,9 +34,9 @@ export default function TrainerNutritionEdit() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch('/api/nutrition?section=plan')
-      .then((r) => r.json())
-      .then((p: Plan) => setPlan(p))
+    if (!studentId) return;
+    apiFetch<Plan>(`/api/nutrition?section=plan&studentId=${studentId}`)
+      .then((p: Plan) => { if (p) setPlan(p); })
       .catch(() => null);
   }, [studentId]);
 
@@ -92,8 +93,16 @@ export default function TrainerNutritionEdit() {
   }
 
   function handleSave() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (!studentId) return;
+    apiFetch(`/api/nutrition/plan?studentId=${studentId}`, {
+      method: 'PUT',
+      body: JSON.stringify(plan),
+    })
+      .then(() => {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      })
+      .catch(() => {});
   }
 
   return (

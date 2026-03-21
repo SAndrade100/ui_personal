@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import { Button } from '../../components/Button';
+import { apiFetch } from '../../lib/api';
 
 type Exercise = { id: string; name: string; reps: string };
 type Training = { id: string; title: string; duration: number; level: string; exercises: Exercise[] };
@@ -14,8 +15,7 @@ export default function TrainingDetail() {
 
   useEffect(() => {
     if (!id) return;
-    fetch('/api/trainings/' + id)
-      .then((r) => r.json())
+    apiFetch<Training>('/api/trainings/' + id)
       .then(setT)
       .catch(() => setT(null));
   }, [id]);

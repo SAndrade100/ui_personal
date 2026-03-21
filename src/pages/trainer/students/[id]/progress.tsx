@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Header from '../../../../components/Header';
 import Card from '../../../../components/Card';
+import { apiFetch } from '../../../../lib/api';
 
 type WeightEntry = { date: string; value: number };
 type WeekEntry   = { week: string; count: number };
@@ -75,6 +76,9 @@ function WeightChart({ data, targetWeight }: { data: WeightEntry[]; targetWeight
 }
 
 function WorkoutBar({ data }: { data: WeekEntry[] }) {
+  if (!data || data.length === 0) {
+    return <div className="text-sm text-center py-6" style={{ color: 'rgba(74,52,42,0.4)' }}>Nenhum treino registrado ainda.</div>;
+  }
   const max = Math.max(...data.map(d => d.count), 1);
   return (
     <div className="flex items-end gap-2 h-24">
@@ -101,8 +105,8 @@ export default function TrainerStudentProgress() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/trainer/students/${id}?section=progress`).then(r => r.json()).then(setData).catch(() => null);
-    fetch(`/api/trainer/students/${id}`).then(r => r.json()).then(setStudent).catch(() => null);
+    apiFetch<ProgressData>(`/api/trainer/students/${id}?section=progress`).then(setData).catch(() => null);
+    apiFetch<Student>(`/api/trainer/students/${id}`).then(setStudent).catch(() => null);
   }, [id]);
 
   if (!data || !student) {

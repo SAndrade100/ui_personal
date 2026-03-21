@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import { apiFetch } from '../lib/api';
+import { useRequireAuth } from '../lib/auth';
 
 type Anamnesis = {
   filledAt: string;
@@ -52,11 +54,11 @@ function Row({ label, value }: { label: string; value: string | number }) {
 }
 
 export default function Anamnesis() {
+  useRequireAuth('student');
   const [data, setData] = useState<Anamnesis | null>(null);
 
   useEffect(() => {
-    fetch('/api/anamnesis')
-      .then((r) => r.json())
+    apiFetch<Anamnesis>('/api/anamnesis')
       .then(setData)
       .catch(() => null);
   }, []);

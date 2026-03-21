@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Header from '../../../components/Header';
 import Card from '../../../components/Card';
 import { Button } from '../../../components/Button';
+import { apiFetch } from '../../../lib/api';
 
 type Exercise = { id: string; name: string; reps: string; rest: string };
 type Training = { id: string; title: string; duration: number; level: string; category: string; exercises: Exercise[] };
@@ -21,11 +22,20 @@ export default function TrainerTrainings() {
 
   useEffect(() => {
     const params = q ? `?q=${encodeURIComponent(q)}` : '';
-    fetch(`/api/trainings${params}`)
-      .then((r) => r.json())
-      .then(setTrainings)
+    apiFetch<Training[]>(`/api/trainings${params}`)
+      .then((data) => {
+        if (Array.isArray(data)) setTrainings(data);
+        else setTrainings([]);
+      })
       .catch(() => setTrainings([]));
   }, [q]);
+
+  function handleDelete(id: string, title: string) {
+    if (!confirm(`Excluir treino "${title}"? Esta ação não pode ser desfeita.`)) return;
+    apiFetch(`/api/trainings/${id}`, { method: 'DELETE' })
+      .then(() => setTrainings((prev) => prev.filter((t) => t.id !== id)))
+      .catch(() => alert('Erro ao excluir treino.'));
+  }
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--color-linen)' }}>
@@ -91,6 +101,12 @@ export default function TrainerTrainings() {
                   <Link href={`/trainer/trainings/${t.id}/edit`}>
                     <Button variant="outline" className="!py-1.5 !px-4 !text-xs">Editar</Button>
                   </Link>
+                  <button
+                    onClick={() => handleDelete(t.id, t.title)}
+                    className="text-xs px-3 py-1.5 rounded-full font-medium"
+                    style={{ background: 'rgba(232,108,44,0.08)', color: 'var(--color-accent)' }}>
+                    Excluir
+                  </button>
                 </div>
               </div>
 

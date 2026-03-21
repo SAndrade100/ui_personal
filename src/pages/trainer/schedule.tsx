@@ -5,7 +5,7 @@ import Card from '../../components/Card';
 import { Button } from '../../components/Button';
 import { apiFetch } from '../../lib/api';
 
-type Session = { id: string; trainingId: string; date: string; time: string; title: string; done: boolean };
+type Session = { id: string; userId: string; trainingId: string; date: string; time: string; title: string; done: boolean };
 type Student = { id: string; name: string; avatar: string };
 
 const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -31,14 +31,29 @@ export default function TrainerSchedule() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [students] = useState<Student[]>([
-    { id: 'u1', name: 'Beatriz Souza', avatar: 'B' },
-    { id: 'u2', name: 'Camila Torres', avatar: 'C' },
-    { id: 'u3', name: 'Rodrigo Lima', avatar: 'R' },
-  ]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [trainings, setTrainings] = useState<{ id: string; title: string }[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [newSession, setNewSession] = useState({ studentId: 'u1', trainingId: 't1', date: '', time: '07:00', title: '' });
+  const [newSession, setNewSession] = useState({ studentId: '', trainingId: '', date: '', time: '07:00', title: '' });
+
+  // Load students and trainings once
+  useEffect(() => {
+    apiFetch<Student[]>('/api/trainer/students')
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setStudents(list);
+        if (list.length > 0) setNewSession(n => ({ ...n, studentId: String(list[0].id) }));
+      })
+      .catch(() => {});
+    apiFetch<{ id: string; title: string }[]>('/api/trainings')
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setTrainings(list);
+        if (list.length > 0) setNewSession(n => ({ ...n, trainingId: String(list[0].id), title: list[0].title }));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const m = `${year}-${String(month + 1).padStart(2, '0')}`;
@@ -71,17 +86,15 @@ export default function TrainerSchedule() {
       method: 'POST',
       body: JSON.stringify(newSession),
     })
-      .then(created => setSessions(prev => [...prev, created]))
-      .catch(() => setSessions(prev => [...prev, {
-        id: 's' + Math.random().toString(36).slice(2, 6),
-        trainingId: newSession.trainingId,
-        date: newSession.date,
-        time: newSession.time,
-        title: newSession.title,
-        done: false,
-      }]));
-    setShowAdd(false);
-    setNewSession({ studentId: 'u1', trainingId: 't1', date: '', time: '07:00', title: '' });
+      .then((created) => {
+        setSessions((prev) => [...prev, created]);
+        setShowAdd(false);
+        setNewSession({ studentId: students[0]?.id ?? '', trainingId: trainings[0]?.id ?? '', date: '', time: '07:00', title: trainings[0]?.title ?? '' });
+      })
+      .catch((err: Error) => {
+        // Inform the user instead of silently adding a fake session
+        alert('Erro ao salvar sessão: ' + (err?.message ?? 'erro desconhecido'));
+      });
   };
 
   const prevMonth = () => { if (month === 0) { setYear(y => y - 1); setMonth(11); } else setMonth(m => m - 1); setSelected(null); };
@@ -191,7 +204,7 @@ export default function TrainerSchedule() {
                   <div className="text-sm" style={{ color: 'rgba(74,52,42,0.4)' }}>Nenhuma sessão neste dia.</div>
                 ) : (
                   selectedSessions.map(s => {
-                    const student = students.find(st => st.id === 'u1');
+                    const student = students.find(st => String(st.id) === String(s.userId));
                     return (
                       <Card key={s.id} className={s.done ? 'opacity-60' : ''}>
                         <div className="flex items-start gap-3">
@@ -260,10 +273,14 @@ export default function TrainerSchedule() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Título do treino</label>
-                <input className="field" value={newSession.title}
-                  onChange={e => setNewSession(n => ({ ...n, title: e.target.value }))}
-                  placeholder="ex: Full Body Beginner" />
+                <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Treino</label>
+                <select className="field" value={newSession.trainingId}
+                  onChange={e => {
+                    const tr = trainings.find(t => String(t.id) === e.target.value);
+                    setNewSession(n => ({ ...n, trainingId: e.target.value, title: tr?.title ?? n.title }));
+                  }}>
+                  {trainings.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>

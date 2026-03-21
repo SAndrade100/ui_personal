@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/Header';
+import { apiFetch } from '../../lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type MacroKey = 'protein' | 'carbs' | 'fat';
@@ -96,8 +97,7 @@ export default function Nutrition() {
   const [open, setOpen] = useState<string | null>(null); // expanded meal in plan
 
   useEffect(() => {
-    fetch('/api/nutrition')
-      .then((r) => r.json())
+    apiFetch<NutritionData>('/api/nutrition')
       .then(setData)
       .catch(() => null);
   }, []);

@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { useAuth } from '../lib/auth';
 import Nav from './Nav';
 
 export const Header: React.FC = () => {
   const { user, signout } = useAuth();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  const handleSignout = () => {
+    signout(() => router.push('/login'));
+  };
 
   return (
     <>
@@ -54,7 +60,7 @@ export const Header: React.FC = () => {
               </div>
             )}
             <button
-              onClick={() => signout()}
+              onClick={handleSignout}
               className="hidden md:block text-xs font-medium px-3 py-1.5 rounded-full border border-transparent hover:border-camel text-[rgba(74,52,42,0.6)] hover:text-espresso"
             >
               Sair
@@ -138,7 +144,7 @@ export const Header: React.FC = () => {
 
             <div style={{ borderTop: '1px solid rgba(74,52,42,0.1)' }} className="mt-4 pt-4">
               <button
-                onClick={() => { setOpen(false); signout(); }}
+                onClick={() => { setOpen(false); handleSignout(); }}
                 className="w-full text-left text-sm font-medium px-3 py-2.5 rounded-full transition-all hover:bg-[rgba(178,150,125,0.12)]"
                 style={{ color: 'rgba(74,52,42,0.6)' }}
               >

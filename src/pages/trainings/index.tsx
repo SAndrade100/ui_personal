@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
+import { apiFetch } from '../../lib/api';
 
 type Training = { id: string; title: string; duration: number; level: string };
 
@@ -15,8 +16,7 @@ export default function Trainings() {
   const [q, setQ] = useState('');
 
   useEffect(() => {
-    fetch('/api/trainings?q=' + encodeURIComponent(q))
-      .then((r) => r.json())
+    apiFetch<Training[]>('/api/trainings?q=' + encodeURIComponent(q))
       .then(setList)
       .catch(() => setList([]));
   }, [q]);

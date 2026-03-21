@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../lib/auth';
 import { Button } from '../components/Button';
 
 export default function Login() {
-  const { signin } = useAuth();
+  const { signin, user } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      router.push(user.role === 'trainer' ? '/trainer' : '/student');
+    }
+  }, [user, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,9 +27,6 @@ export default function Login() {
         setError('Email ou senha incorretos.');
         return;
       }
-      // role-based redirect handled after /api/auth/me response
-      const isTrainer = email.toLowerCase().includes('trainer') || email.toLowerCase().includes('ana');
-      router.push(isTrainer ? '/trainer' : '/student');
     });
   };
 

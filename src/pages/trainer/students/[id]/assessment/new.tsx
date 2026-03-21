@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '../../../../../components/Header';
 import Card from '../../../../../components/Card';
 import { Button } from '../../../../../components/Button';
+import { apiFetch } from '../../../../../lib/api';
 
 type Measurements = { waist: number; hip: number; chest: number; rightArm: number; leftArm: number; rightThigh: number; leftThigh: number; abdomen: number; calf: number };
 type Skinfolds = { triceps: number; subscapular: number; suprailiac: number; abdominal: number; thigh: number };
@@ -19,8 +20,8 @@ const skinfoldLabels: [keyof Skinfolds, string][] = [
 ];
 
 export default function TrainerAssessmentNew() {
-  const { query } = useRouter();
-  const studentId = query.id as string | undefined;
+  const router = useRouter();
+  const studentId = router.query.id as string | undefined;
 
   const [form, setForm] = useState({
     date: new Date().toISOString().slice(0, 10),
@@ -52,8 +53,16 @@ export default function TrainerAssessmentNew() {
   }
 
   function handleSave() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (!studentId) return;
+    apiFetch('/api/assessments', {
+      method: 'POST',
+      body: JSON.stringify({ studentId, ...form }),
+    })
+      .then(() => {
+        setSaved(true);
+        setTimeout(() => router.push(`/trainer/students/${studentId}`), 1200);
+      })
+      .catch(() => alert('Erro ao salvar avaliação.'));
   }
 
   return (

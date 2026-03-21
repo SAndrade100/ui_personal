@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import { apiFetch } from '../lib/api';
+import { useRequireAuth } from '../lib/auth';
 
 type UserProfile = {
   id: string;
@@ -73,11 +75,11 @@ function WeightBar({ start, current, target }: { start: number; current: number;
 }
 
 export default function Profile() {
+  useRequireAuth('student');
   const [user, setUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
-    fetch('/api/user')
-      .then((r) => r.json())
+    apiFetch<UserProfile>('/api/user')
       .then(setUser)
       .catch(() => null);
   }, []);

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import { apiFetch } from '../lib/api';
+import { useRequireAuth } from '../lib/auth';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type WeightEntry = { date: string; value: number };
@@ -25,11 +27,14 @@ function smoothPath(pts: { x: number; y: number }[]): string {
 }
 
 // ── Weight Line Chart ─────────────────────────────────────────────────────────
-function WeightChart({ data }: { data: WeightEntry[] }) {
+function WeightChart({ data, targetWeight }: { data: WeightEntry[]; targetWeight: number }) {
+  if (!data || data.length === 0) {
+    return <div className="h-48 flex items-center justify-center text-sm" style={{ color: 'rgba(74,52,42,0.4)' }}>Nenhum dado de peso registrado ainda.</div>;
+  }
   const W = 600, H = 200, PL = 52, PR = 20, PT = 24, PB = 38;
   const cW = W - PL - PR, cH = H - PT - PB;
   const vals = data.map((d) => d.value);
-  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const minV = Math.min(...vals, targetWeight), maxV = Math.max(...vals, targetWeight);
   const pad  = (maxV - minV) * 0.35 || 1;
   const lo = minV - pad, hi = maxV + pad;
 
@@ -69,10 +74,10 @@ function WeightChart({ data }: { data: WeightEntry[] }) {
       ))}
 
       {/* Target weight dashed line */}
-      <line x1={PL} y1={PT + cH - ((62 - lo) / (hi - lo)) * cH} x2={W - PR} y2={PT + cH - ((62 - lo) / (hi - lo)) * cH}
+      <line x1={PL} y1={PT + cH - ((targetWeight - lo) / (hi - lo)) * cH} x2={W - PR} y2={PT + cH - ((targetWeight - lo) / (hi - lo)) * cH}
         stroke="#B2967D" strokeWidth="1" strokeDasharray="4 3" opacity="0.6" />
-      <text x={W - PR - 2} y={PT + cH - ((62 - lo) / (hi - lo)) * cH - 4} textAnchor="end" fontSize={9} fill="#B2967D" opacity="0.8">
-        meta 62 kg
+      <text x={W - PR - 2} y={PT + cH - ((targetWeight - lo) / (hi - lo)) * cH - 4} textAnchor="end" fontSize={9} fill="#B2967D" opacity="0.8">
+        meta {targetWeight} kg
       </text>
 
       {/* Area fill */}
@@ -101,6 +106,9 @@ function WeightChart({ data }: { data: WeightEntry[] }) {
 
 // ── Weekly Bar Chart ──────────────────────────────────────────────────────────
 function WeeklyChart({ data }: { data: WeekEntry[] }) {
+  if (!data || data.length === 0) {
+    return <div className="h-40 flex items-center justify-center text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>Nenhum treino registrado ainda.</div>;
+  }
   const W = 600, H = 170, PL = 28, PR = 8, PT = 20, PB = 36;
   const cW = W - PL - PR, cH = H - PT - PB;
   const maxY = 6;
@@ -153,12 +161,16 @@ const catEmoji: Record<string, string> = {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function Progress() {
+  useRequireAuth('student');
   const [data, setData] = useState<ProgressData | null>(null);
+  const [targetWeight, setTargetWeight] = useState(62);
 
   useEffect(() => {
-    fetch('/api/progress')
-      .then((r) => r.json())
+    apiFetch<ProgressData>('/api/progress')
       .then(setData)
+      .catch(() => null);
+    apiFetch<{ targetWeight?: number }>('/api/user')
+      .then((u) => { if (u.targetWeight) setTargetWeight(u.targetWeight); })
       .catch(() => null);
   }, []);
 
@@ -232,7 +244,7 @@ export default function Progress() {
             )}
           </div>
           {data ? (
-            <WeightChart data={data.weightHistory} />
+            <WeightChart data={data.weightHistory} targetWeight={targetWeight} />
           ) : (
             <div className="h-48 flex items-center justify-center text-sm" style={{ color: 'rgba(74,52,42,0.4)' }}>
               Carregando…
@@ -260,7 +272,7 @@ export default function Progress() {
                 className="rounded-full px-3 py-1 text-xs font-semibold"
                 style={{ background: 'rgba(232,108,44,0.2)', color: '#E86C2C' }}
               >
-                Média: {(data.weeklyWorkouts.reduce((s, w) => s + w.count, 0) / data.weeklyWorkouts.length).toFixed(1)}× / sem
+                Média: {data.weeklyWorkouts.length > 0 ? (data.weeklyWorkouts.reduce((s, w) => s + w.count, 0) / data.weeklyWorkouts.length).toFixed(1) : '0'}× / sem
               </div>
             )}
           </div>

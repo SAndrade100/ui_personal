@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
 import { Button } from '../components/Button';
+import { apiFetch } from '../lib/api';
+import { useRequireAuth } from '../lib/auth';
 
 type Session = { id: string; trainingId: string; date: string; time: string; title: string; done: boolean };
 
@@ -30,6 +32,7 @@ const categoryEmoji: Record<string, string> = {
 
 
 export default function Schedule() {
+  useRequireAuth('student');
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth()); // 0-indexed
@@ -43,8 +46,8 @@ export default function Schedule() {
       ? `${year + 1}-01`
       : `${year}-${String(month + 2).padStart(2, '0')}`;
     Promise.all([
-      fetch(`/api/schedule?month=${m}`).then((r) => r.json()),
-      fetch(`/api/schedule?month=${m2}`).then((r) => r.json()),
+      apiFetch<Session[]>(`/api/schedule?month=${m}`),
+      apiFetch<Session[]>(`/api/schedule?month=${m2}`),
     ])
       .then(([a, b]) => setSessions([...a, ...b]))
       .catch(() => setSessions([]));

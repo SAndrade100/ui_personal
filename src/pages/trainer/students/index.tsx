@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '../../../components/Header';
 import Card from '../../../components/Card';
 import { Button } from '../../../components/Button';
+import { apiFetch } from '../../../lib/api';
 
 type Student = {
   id: string; name: string; avatar: string; status: string;
@@ -18,20 +19,62 @@ function fmtDate(iso: string) {
   return new Date(iso + 'T12:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
+const GOALS = ['Perda de peso', 'Ganho de massa', 'Condicionamento', 'Reabilitação', 'Outro'];
+const PLANS = ['Plano Básico', 'Plano Premium', 'Plano VIP'];
+
 export default function TrainerStudents() {
   const [students, setStudents] = useState<Student[]>([]);
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [q, setQ] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    name: '', email: '', phone: '', birthdate: '',
+    height: '', startWeight: '', targetWeight: '', goal: GOALS[0], plan: PLANS[0],
+  });
 
-  useEffect(() => {
+  const fetchStudents = useCallback(() => {
     const params = new URLSearchParams();
     if (filter !== 'all') params.set('status', filter);
     if (q.trim()) params.set('q', q.trim());
-    fetch(`/api/trainer/students?${params}`)
-      .then((r) => r.json())
-      .then(setStudents)
+    apiFetch<Student[]>(`/api/trainer/students?${params}`)
+      .then((data) => {
+        if (Array.isArray(data)) setStudents(data);
+        else setStudents([]);
+      })
       .catch(() => setStudents([]));
   }, [filter, q]);
+
+  useEffect(() => { fetchStudents(); }, [fetchStudents]);
+
+  function handleCreate() {
+    if (!createForm.name || !createForm.email) return;
+    setSaving(true);
+    apiFetch('/api/trainer/students', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...createForm,
+        height: createForm.height ? Number(createForm.height) : undefined,
+        startWeight: createForm.startWeight ? Number(createForm.startWeight) : undefined,
+        targetWeight: createForm.targetWeight ? Number(createForm.targetWeight) : undefined,
+      }),
+    })
+      .then(() => {
+        fetchStudents();
+        setShowCreate(false);
+        setCreateForm({ name: '', email: '', phone: '', birthdate: '', height: '', startWeight: '', targetWeight: '', goal: GOALS[0], plan: PLANS[0] });
+        alert(`Aluno criado! A senha padrão é: changeme`);
+      })
+      .catch(() => alert('Erro ao criar aluno.'))
+      .finally(() => setSaving(false));
+  }
+
+  function handleDelete(id: string, name: string) {
+    if (!confirm(`Excluir aluno "${name}"? Esta ação não pode ser desfeita.`)) return;
+    apiFetch(`/api/trainer/students/${id}`, { method: 'DELETE' })
+      .then(() => fetchStudents())
+      .catch(() => alert('Erro ao excluir aluno.'));
+  }
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--color-linen)' }}>
@@ -45,9 +88,12 @@ export default function TrainerStudents() {
           <h1 className="text-3xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>
             Meus Alunos
           </h1>
-          <p className="mt-1 text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            {students.length} resultado{students.length !== 1 ? 's' : ''}
-          </p>
+          <div className="flex items-center justify-between flex-wrap gap-3 mt-2">
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              {students.length} resultado{students.length !== 1 ? 's' : ''}
+            </p>
+            <Button variant="outline-white" onClick={() => setShowCreate(true)}>+ Novo aluno</Button>
+          </div>
         </div>
       </div>
 
@@ -143,12 +189,20 @@ export default function TrainerStudents() {
                       </div>
                     </div>
 
-                    {/* Action */}
-                    <Link href={`/trainer/students/${s.id}`}>
-                      <Button variant="outline" className="!py-1.5 !px-4 !text-xs flex-shrink-0">
-                        Ver aluno →
-                      </Button>
-                    </Link>
+                    {/* Actions */}
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => handleDelete(s.id, s.name)}
+                        className="text-xs px-3 py-1.5 rounded-full font-medium"
+                        style={{ background: 'rgba(232,108,44,0.08)', color: 'var(--color-accent)' }}>
+                        Excluir
+                      </button>
+                      <Link href={`/trainer/students/${s.id}`}>
+                        <Button variant="outline" className="!py-1.5 !px-4 !text-xs">
+                          Ver aluno →
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
 
                   {/* Mobile metrics */}
@@ -179,6 +233,70 @@ export default function TrainerStudents() {
           </div>
         )}
       </div>
+
+      {/* Create student modal */}
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(46,29,22,0.6)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-lg rounded-card p-6 overflow-y-auto max-h-[90vh]"
+            style={{ background: 'var(--color-linen)' }}>
+            <h3 className="text-xl font-bold mb-5" style={{ fontFamily: 'var(--font-heading)' }}>Novo aluno</h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Nome *</label>
+                  <input className="field" value={createForm.name} onChange={e => setCreateForm(f => ({ ...f, name: e.target.value }))} placeholder="Nome completo" />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>E-mail *</label>
+                  <input type="email" className="field" value={createForm.email} onChange={e => setCreateForm(f => ({ ...f, email: e.target.value }))} placeholder="email@exemplo.com" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Telefone</label>
+                  <input className="field" value={createForm.phone} onChange={e => setCreateForm(f => ({ ...f, phone: e.target.value }))} placeholder="(11) 99999-9999" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Data de nascimento</label>
+                  <input type="date" className="field" value={createForm.birthdate} onChange={e => setCreateForm(f => ({ ...f, birthdate: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Altura (cm)</label>
+                  <input type="number" className="field" value={createForm.height} onChange={e => setCreateForm(f => ({ ...f, height: e.target.value }))} placeholder="170" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Peso inicial (kg)</label>
+                  <input type="number" className="field" value={createForm.startWeight} onChange={e => setCreateForm(f => ({ ...f, startWeight: e.target.value }))} placeholder="70" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Peso meta (kg)</label>
+                  <input type="number" className="field" value={createForm.targetWeight} onChange={e => setCreateForm(f => ({ ...f, targetWeight: e.target.value }))} placeholder="65" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Objetivo</label>
+                  <select className="field" value={createForm.goal} onChange={e => setCreateForm(f => ({ ...f, goal: e.target.value }))}>
+                    {GOALS.map(g => <option key={g}>{g}</option>)}
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Plano</label>
+                  <select className="field" value={createForm.plan} onChange={e => setCreateForm(f => ({ ...f, plan: e.target.value }))}>
+                    {PLANS.map(p => <option key={p}>{p}</option>)}
+                  </select>
+                </div>
+              </div>
+              <p className="text-xs" style={{ color: 'rgba(74,52,42,0.45)' }}>
+                Senha inicial: <strong>changeme</strong>. O aluno deve alterá-la no primeiro acesso.
+              </p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <Button variant="ghost" fullWidth onClick={() => setShowCreate(false)}>Cancelar</Button>
+              <Button variant="accent" fullWidth onClick={handleCreate} disabled={saving}>
+                {saving ? 'Salvando…' : 'Criar aluno'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

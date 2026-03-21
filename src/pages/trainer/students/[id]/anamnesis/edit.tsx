@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '../../../../../components/Header';
 import Card from '../../../../../components/Card';
 import { Button } from '../../../../../components/Button';
+import { apiFetch } from '../../../../../lib/api';
 
 type Anamnesis = {
   filledAt: string;
@@ -47,13 +48,31 @@ function TagEditor({ label, value, onChange }: { label: string; value: string[];
 }
 
 export default function TrainerAnamnesisEdit() {
-  const { query } = useRouter();
-  const studentId = query.id as string | undefined;
+  const router = useRouter();
+  const studentId = router.query.id as string | undefined;
   const [form, setForm] = useState<Anamnesis | null>(null);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch('/api/anamnesis').then(r => r.json()).then(setForm).catch(() => null);
+    if (!studentId) return;
+    apiFetch<Anamnesis>(`/api/trainer/students/${studentId}?section=anamnesis`)
+      .then((data) => {
+        if (data) {
+          setForm(data);
+        } else {
+          // No existing anamnesis — initialize blank form
+          setForm({
+            filledAt: new Date().toISOString(),
+            personalInfo: { bloodType: '', occupation: '', sleepHours: 7, waterIntake: '', smokingStatus: '', alcoholUse: '' },
+            healthHistory: { conditions: [], surgeries: [], allergies: [], intolerances: [], medications: [], familyHistory: [] },
+            physicalActivity: { currentLevel: '', pastActivities: [], injuries: [], limitations: '' },
+            dietaryProfile: { eatingPattern: '', avoidedFoods: [], preferredFoods: [], supplementsInUse: [], waterConsumption: '', mealPrepSkill: '' },
+            goals: { primary: '', secondary: '', timeframe: '', motivation: '', obstacles: '' },
+            trainerNotes: '',
+          });
+        }
+      })
+      .catch(() => null);
   }, [studentId]);
 
   if (!form) {
@@ -86,8 +105,16 @@ export default function TrainerAnamnesisEdit() {
   }
 
   function handleSave() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (!studentId) return;
+    apiFetch(`/api/anamnesis?studentId=${studentId}`, {
+      method: 'PUT',
+      body: JSON.stringify(form),
+    })
+      .then(() => {
+        setSaved(true);
+        setTimeout(() => router.push(`/trainer/students/${studentId}`), 1200);
+      })
+      .catch(() => alert('Erro ao salvar anamnese.'));
   }
 
   return (

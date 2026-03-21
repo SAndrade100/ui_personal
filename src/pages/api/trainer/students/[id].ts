@@ -1,17 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import students from '../../../../mocks/fixtures/students.json';
-import anamnesis from '../../../../mocks/fixtures/anamnesis.json';
-import assessments from '../../../../mocks/fixtures/assessments.json';
-import progress from '../../../../mocks/fixtures/progress.json';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id, section } = req.query;
-  const student = students.find((s) => s.id === id);
-  if (!student) return res.status(404).json({ message: 'Aluno não encontrado' });
+const API = process.env.NEXT_PUBLIC_API_URL ?? '';
 
-  if (section === 'anamnesis')   return res.status(200).json(anamnesis);
-  if (section === 'assessments') return res.status(200).json(assessments);
-  if (section === 'progress')    return res.status(200).json(progress);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const target = `${API}${req.url}`;
+    const headers: Record<string, string> = { 'content-type': 'application/json' };
+    if (req.headers.authorization) headers['authorization'] = String(req.headers.authorization);
+    if (req.headers.cookie) headers['cookie'] = String(req.headers.cookie);
 
-  res.status(200).json(student);
+    const r = await fetch(target, {
+      method: req.method,
+      headers,
+      body: req.method === 'GET' || req.method === 'HEAD' ? undefined : JSON.stringify(req.body),
+    });
+    if (r.status === 404) return res.status(404).json({ message: 'Aluno não encontrado' });
+    const data = await r.json().catch(() => null);
+    res.status(r.status).json(data);
+  } catch (err) {
+    res.status(502).json({ message: 'Bad gateway' });
+  }
 }

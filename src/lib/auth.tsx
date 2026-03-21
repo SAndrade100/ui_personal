@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { apiFetch, setToken, clearToken, getToken } from './api';
 
 type User = { id: string; name: string; role: 'student' | 'trainer' };
@@ -63,4 +64,27 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
+}
+
+export function useRequireAuth(requiredRole?: 'student' | 'trainer') {
+  const { user, token } = useAuth();
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const stored = getToken();
+    if (!stored && !token) {
+      router.replace('/login');
+      return;
+    }
+    if (user) {
+      if (requiredRole && user.role !== requiredRole) {
+        router.replace(user.role === 'trainer' ? '/trainer' : '/student');
+        return;
+      }
+      setReady(true);
+    }
+  }, [user, token, requiredRole, router]);
+
+  return { user, ready };
 }

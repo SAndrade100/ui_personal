@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '../../../components/Header';
 import Card from '../../../components/Card';
 import { Button } from '../../../components/Button';
+import { apiFetch } from '../../../lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Student = {
@@ -76,23 +77,55 @@ const measureLabels: Record<string, string> = {
   leftArm: 'Bíceps E', rightThigh: 'Coxa D', leftThigh: 'Coxa E', abdomen: 'Abdômen', calf: 'Panturrilha',
 };
 
+const GOALS = ['Perda de peso', 'Ganho de massa', 'Condicionamento', 'Reabilitação', 'Outro'];
+const PLANS = ['Plano Básico', 'Plano Premium', 'Plano VIP'];
+
 type Tab = 'overview' | 'anamnesis' | 'assessments';
 
 export default function TrainerStudentProfile() {
-  const { query } = useRouter();
-  const id = query.id as string | undefined;
+  const router = useRouter();
+  const id = router.query.id as string | undefined;
 
   const [student, setStudent] = useState<Student | null>(null);
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [anamnesis, setAnamnesis] = useState<Anamnesis | null>(null);
   const [tab, setTab] = useState<Tab>('overview');
+  const [showEdit, setShowEdit] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editForm, setEditForm] = useState<Partial<Student>>({});
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/trainer/students/${id}`).then((r) => r.json()).then(setStudent).catch(() => null);
-    fetch(`/api/trainer/students/${id}?section=assessments`).then((r) => r.json()).then(setAssessments).catch(() => []);
-    fetch(`/api/trainer/students/${id}?section=anamnesis`).then((r) => r.json()).then(setAnamnesis).catch(() => null);
+    apiFetch<Student>(`/api/trainer/students/${id}`)
+      .then((s) => { setStudent(s); setEditForm(s); })
+      .catch(() => null);
+    apiFetch<Assessment[]>(`/api/trainer/students/${id}?section=assessments`).then(setAssessments).catch(() => setAssessments([]));
+    apiFetch<Anamnesis>(`/api/trainer/students/${id}?section=anamnesis`).then(setAnamnesis).catch(() => null);
   }, [id]);
+
+  function handleSaveEdit() {
+    if (!id) return;
+    setSaving(true);
+    apiFetch<Student>(`/api/trainer/students/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(editForm),
+    })
+      .then(() => {
+        // Re-fetch full student with computed fields
+        return apiFetch<Student>(`/api/trainer/students/${id}`);
+      })
+      .then((fresh) => { setStudent(fresh); setEditForm(fresh); setShowEdit(false); })
+      .catch(() => alert('Erro ao salvar alterações.'))
+      .finally(() => setSaving(false));
+  }
+
+  function handleDelete() {
+    if (!id || !student) return;
+    if (!confirm(`Excluir aluno "${student.name}"? Esta ação não pode ser desfeita.`)) return;
+    apiFetch(`/api/trainer/students/${id}`, { method: 'DELETE' })
+      .then(() => router.push('/trainer/students'))
+      .catch(() => alert('Erro ao excluir aluno.'));
+  }
 
   if (!student) {
     return (
@@ -139,6 +172,13 @@ export default function TrainerStudentProfile() {
               <Link href={`/trainer/students/${id}/anamnesis/edit`}>
                 <Button variant="outline-white">Editar anamnese</Button>
               </Link>
+              <Button variant="outline-white" onClick={() => setShowEdit(true)}>Editar aluno</Button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 rounded-[var(--radius-btn)] text-sm font-medium border transition-all"
+                style={{ borderColor: 'rgba(255,100,100,0.4)', color: 'rgba(255,180,180,0.9)' }}>
+                Excluir
+              </button>
               <Link href={`/trainer/students/${id}/progress`}>
                 <Button variant="accent">Ver progresso</Button>
               </Link>
@@ -221,12 +261,6 @@ export default function TrainerStudentProfile() {
                 {latest.notes && <Row label="Obs" value={latest.notes} />}
               </SectionCard>
             )}
-
-            {/* Trainer notes */}
-            <div className="md:col-span-2 rounded-card p-5" style={{ background: 'rgba(232,108,44,0.07)', border: '1px solid rgba(232,108,44,0.15)' }}>
-              <p className="text-xs font-semibold tracking-widest mb-2" style={{ color: 'var(--color-accent)' }}>NOTAS DO TREINADOR</p>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--color-espresso)' }}>{student.notes}</p>
-            </div>
 
             {/* Quick actions */}
             <div className="md:col-span-2 flex gap-3 flex-wrap">
@@ -314,11 +348,6 @@ export default function TrainerStudentProfile() {
               <Row label="Motivação" value={anamnesis.goals.motivation} />
               <Row label="Obstáculos" value={anamnesis.goals.obstacles} />
             </SectionCard>
-
-            <div className="rounded-card p-5" style={{ background: 'rgba(232,108,44,0.07)' }}>
-              <p className="text-xs font-semibold tracking-widest mb-2" style={{ color: 'var(--color-accent)' }}>NOTAS DO TREINADOR</p>
-              <p className="text-sm leading-relaxed">{anamnesis.trainerNotes}</p>
-            </div>
           </div>
         )}
 
@@ -389,6 +418,68 @@ export default function TrainerStudentProfile() {
           </div>
         )}
       </div>
+
+      {/* Edit student modal */}
+      {showEdit && student && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(46,29,22,0.6)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-lg rounded-card p-6 overflow-y-auto max-h-[90vh]"
+            style={{ background: 'var(--color-linen)' }}>
+            <h3 className="text-xl font-bold mb-5" style={{ fontFamily: 'var(--font-heading)' }}>
+              Editar aluno
+            </h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Nome</label>
+                  <input className="field" value={editForm.name ?? ''} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Telefone</label>
+                  <input className="field" value={editForm.phone ?? ''} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Altura (cm)</label>
+                  <input type="number" className="field" value={editForm.height ?? ''} onChange={e => setEditForm(f => ({ ...f, height: Number(e.target.value) }))} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Peso atual (kg)</label>
+                  <input type="number" className="field" value={editForm.currentWeight ?? ''} onChange={e => setEditForm(f => ({ ...f, currentWeight: Number(e.target.value) }))} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Peso meta (kg)</label>
+                  <input type="number" className="field" value={editForm.targetWeight ?? ''} onChange={e => setEditForm(f => ({ ...f, targetWeight: Number(e.target.value) }))} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Objetivo</label>
+                  <select className="field" value={editForm.goal ?? ''} onChange={e => setEditForm(f => ({ ...f, goal: e.target.value }))}>
+                    {GOALS.map(g => <option key={g}>{g}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Plano</label>
+                  <select className="field" value={editForm.plan ?? ''} onChange={e => setEditForm(f => ({ ...f, plan: e.target.value }))}>
+                    {PLANS.map(p => <option key={p}>{p}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>Status</label>
+                  <select className="field" value={editForm.status ?? 'active'} onChange={e => setEditForm(f => ({ ...f, status: e.target.value }))}>
+                    <option value="active">Ativo</option>
+                    <option value="inactive">Inativo</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <Button variant="ghost" fullWidth onClick={() => setShowEdit(false)}>Cancelar</Button>
+              <Button variant="accent" fullWidth onClick={handleSaveEdit} disabled={saving}>
+                {saving ? 'Salvando…' : 'Salvar'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

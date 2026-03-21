@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import Card from '../../components/Card';
 import { apiFetch } from '../../lib/api';
+import { useSocket } from '../../lib/socket';
 
 type Message = { id: string; from: 'trainer' | 'student'; text: string; time: string };
 type Student = { id: string; name: string; avatar: string };
@@ -20,32 +21,62 @@ function fmtDateLabel(iso: string) {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 
-const STUDENTS: Student[] = [
-  { id: 'u1', name: 'Beatriz Souza', avatar: 'B' },
-  { id: 'u2', name: 'Camila Torres', avatar: 'C' },
-  { id: 'u3', name: 'Rodrigo Lima',  avatar: 'R' },
-  { id: 'u4', name: 'Larissa Mendes', avatar: 'L' },
-];
 
 export default function TrainerChat() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [activeStudent, setActiveStudent] = useState<Student>(STUDENTS[0]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [activeStudent, setActiveStudent] = useState<Student | null>(null);
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
+  const activeStudentRef = useRef<Student | null>(null);
+
+  // Keep ref in sync so socket callback sees latest value
+  useEffect(() => { activeStudentRef.current = activeStudent; }, [activeStudent]);
+
+  const handleNewMessage = useCallback((msg: Message) => {
+    setMessages((prev) => {
+      if (prev.some((m) => m.id === msg.id)) return prev;
+      const optimisticIdx = prev.findIndex((m) => String(m.id).startsWith('tmp') && m.text === msg.text);
+      if (optimisticIdx >= 0) {
+        const next = [...prev];
+        next[optimisticIdx] = msg;
+        return next;
+      }
+      return [...prev, msg];
+    });
+  }, []);
+
+  const { sendMessage } = useSocket(handleNewMessage);
+
+  // Load students from API
+  useEffect(() => {
+    apiFetch<{ id: string; name: string; avatar: string }[]>('/api/trainer/students')
+      .then((data) => {
+        const list = (Array.isArray(data) ? data : []).map((s) => ({
+          id: String(s.id),
+          name: s.name,
+          avatar: s.avatar || s.name.charAt(0).toUpperCase(),
+        }));
+        setStudents(list);
+        if (list.length > 0) setActiveStudent(list[0]);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
+    if (!activeStudent) return;
     apiFetch<Message[]>(`/api/chat?studentId=${activeStudent.id}`)
       .then(setMessages)
       .catch(() => setMessages([]));
-  }, [activeStudent.id]);
+  }, [activeStudent?.id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  function sendMessage() {
+  function sendChatMessage() {
     const text = input.trim();
-    if (!text) return;
+    if (!text || !activeStudent) return;
     const optimistic: Message = {
       id: 'tmp' + Date.now(),
       from: 'trainer',
@@ -54,12 +85,18 @@ export default function TrainerChat() {
     };
     setMessages(prev => [...prev, optimistic]);
     setInput('');
-    apiFetch<Message>('/api/chat', {
-      method: 'POST',
-      body: JSON.stringify({ studentId: activeStudent.id, text }),
-    })
-      .then(saved => setMessages(prev => prev.map(m => m.id === optimistic.id ? { ...saved, from: saved.from as 'trainer' | 'student' } : m)))
-      .catch(() => {});
+    sendMessage({ studentId: activeStudent.id, text });
+  }
+
+  if (!activeStudent) {
+    return (
+      <div className="min-h-screen" style={{ background: 'var(--color-linen)' }}>
+        <Header />
+        <div className="flex items-center justify-center h-64 text-sm" style={{ color: 'rgba(74,52,42,0.4)' }}>
+          {students.length === 0 ? 'Nenhum aluno cadastrado.' : 'Carregando…'}
+        </div>
+      </div>
+    );
   }
 
   // Group messages by date
@@ -89,7 +126,7 @@ export default function TrainerChat() {
 
           {/* Student list */}
           <div className="w-64 flex-shrink-0 flex flex-col gap-2 overflow-y-auto">
-            {STUDENTS.map(s => (
+            {students.map(s => (
               <button key={s.id}
                 onClick={() => setActiveStudent(s)}
                 className="flex items-center gap-3 p-3 rounded-2xl text-left transition-all w-full"
@@ -167,7 +204,7 @@ export default function TrainerChat() {
             {/* Input */}
             <div className="p-4 border-t" style={{ borderColor: 'rgba(74,52,42,0.1)' }}>
               <form
-                onSubmit={e => { e.preventDefault(); sendMessage(); }}
+                onSubmit={e => { e.preventDefault(); sendChatMessage(); }}
                 className="flex gap-2">
                 <input
                   className="field flex-1"

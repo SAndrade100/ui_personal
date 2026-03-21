@@ -1,5 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Header from '../components/Header';
+import { apiFetch } from '../lib/api';
+import { useRequireAuth } from '../lib/auth';
+import { useSocket } from '../lib/socket';
 
 type Msg = { id: string; from: 'trainer' | 'student'; text: string; time: string };
 
@@ -12,14 +15,31 @@ function fmtDay(iso: string): string {
 }
 
 export default function Chat() {
+  useRequireAuth('student');
   const [msgs, setMsgs]   = useState<Msg[]>([]);
   const [draft, setDraft] = useState('');
   const bottomRef         = useRef<HTMLDivElement>(null);
 
+  const handleNewMessage = useCallback((msg: Msg) => {
+    setMsgs((prev) => {
+      // Avoid duplicates (optimistic + server)
+      if (prev.some((m) => m.id === msg.id)) return prev;
+      // Replace optimistic message if text matches
+      const optimisticIdx = prev.findIndex((m) => String(m.id).startsWith('local-') && m.text === msg.text);
+      if (optimisticIdx >= 0) {
+        const next = [...prev];
+        next[optimisticIdx] = msg;
+        return next;
+      }
+      return [...prev, msg];
+    });
+  }, []);
+
+  const { sendMessage } = useSocket(handleNewMessage);
+
   useEffect(() => {
-    fetch('/api/chat')
-      .then((r) => r.json())
-      .then((d: Msg[]) => setMsgs(d))
+    apiFetch<Msg[]>('/api/chat')
+      .then((d) => setMsgs(d))
       .catch(() => null);
   }, []);
 
@@ -39,18 +59,7 @@ export default function Chat() {
     setMsgs((prev) => [...prev, newMsg]);
     setDraft('');
 
-    // Simulate trainer reply after 1.2 s
-    setTimeout(() => {
-      setMsgs((prev) => [
-        ...prev,
-        {
-          id:   `reply-${Date.now()}`,
-          from: 'trainer',
-          text: '👍 Recebi sua mensagem! Vou responder em breve.',
-          time: new Date().toISOString(),
-        },
-      ]);
-    }, 1200);
+    sendMessage({ text });
   };
 
   // Group by day

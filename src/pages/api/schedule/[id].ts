@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       headers,
       body: req.method === 'GET' || req.method === 'HEAD' ? undefined : JSON.stringify(req.body),
     });
-    if (r.status === 404) return res.status(404).json({ message: 'Not found' });
+    if (r.status === 204) return res.status(204).end();
     const data = await r.json().catch(() => null);
     res.status(r.status).json(data);
   } catch (err) {

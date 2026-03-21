@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Header from '../../../components/Header';
 import { Button } from '../../../components/Button';
+import { apiFetch } from '../../../lib/api';
 
-type Exercise = { id: string; name: string; reps: string };
+type Exercise = { id: string; name: string; reps: string; description?: string; videoUrl?: string };
 type Training = { id: string; title: string; duration: number; exercises: Exercise[] };
 
 export default function TrainingRun() {
@@ -16,9 +17,9 @@ export default function TrainingRun() {
 
   useEffect(() => {
     if (!id) return;
-    fetch('/api/trainings/' + id)
-      .then((r) => r.json())
-      .then(setT);
+    apiFetch<Training>('/api/trainings/' + id)
+      .then(setT)
+      .catch(() => null);
   }, [id]);
 
   if (!t) return (
@@ -29,7 +30,29 @@ export default function TrainingRun() {
 
   const isLast = current === t.exercises.length - 1;
   const prev = () => { setCurrent((c) => Math.max(c - 1, 0)); setDone(false); };
-  const next = () => { if (isLast) { setDone(true); } else { setCurrent((c) => c + 1); } };
+  const next = () => {
+    if (isLast) {
+      setDone(true);
+      // Mark today's schedule session for this training as done
+      const todayMonth = new Date().toISOString().slice(0, 7);
+      const todayDate = new Date().toISOString().slice(0, 10);
+      apiFetch<{ id: string; trainingId: string; date: string; done: boolean }[]>(`/api/schedule?month=${todayMonth}`)
+        .then((sessions) => {
+          const session = sessions.find(
+            (s) => String(s.trainingId) === String(id) && String(s.date).slice(0, 10) === todayDate && !s.done,
+          );
+          if (session) {
+            apiFetch(`/api/schedule/${session.id}`, {
+              method: 'PATCH',
+              body: JSON.stringify({ done: true }),
+            }).catch(() => {});
+          }
+        })
+        .catch(() => {});
+    } else {
+      setCurrent((c) => c + 1);
+    }
+  };
   const progress = Math.round(((current + (done ? 1 : 0)) / t.exercises.length) * 100);
 
   return (
@@ -84,14 +107,30 @@ export default function TrainingRun() {
                 <h2 className="text-3xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>
                   {t.exercises[current].name}
                 </h2>
+                {t.exercises[current].description && (
+                  <p className="text-sm mt-3 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    {t.exercises[current].description}
+                  </p>
+                )}
               </div>
-              <div>
+              <div className="flex items-center gap-3 flex-wrap">
                 <span
                   className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold"
                   style={{ background: 'var(--color-accent)', color: 'white' }}
                 >
                   {t.exercises[current].reps}
                 </span>
+                {t.exercises[current].videoUrl && (
+                  <a
+                    href={t.exercises[current].videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold transition-all"
+                    style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}
+                  >
+                    ▶ Ver vídeo
+                  </a>
+                )}
               </div>
             </div>
 

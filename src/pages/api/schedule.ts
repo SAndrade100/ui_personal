@@ -1,10 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import schedule from '../../mocks/fixtures/schedule.json';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const month = req.query.month as string | undefined; // e.g. "2026-03"
-  const result = month
-    ? schedule.filter((s) => s.date.startsWith(month))
-    : schedule;
-  res.status(200).json(result);
+const API = process.env.NEXT_PUBLIC_API_URL ?? '';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const target = `${API}${req.url}`;
+    const headers: Record<string, string> = { 'content-type': 'application/json' };
+    if (req.headers.authorization) headers['authorization'] = String(req.headers.authorization);
+    if (req.headers.cookie) headers['cookie'] = String(req.headers.cookie);
+
+    const r = await fetch(target, {
+      method: req.method,
+      headers,
+      body: req.method === 'GET' || req.method === 'HEAD' ? undefined : JSON.stringify(req.body),
+    });
+    const data = await r.json().catch(() => null);
+    res.status(r.status).json(data);
+  } catch (err) {
+    res.status(502).json({ message: 'Bad gateway' });
+  }
 }

@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Header from '../../components/Header';
 import Card from '../../components/Card';
 import { Button } from '../../components/Button';
+import { apiFetch } from '../../lib/api';
+import { useRequireAuth } from '../../lib/auth';
 
 type Student = {
   id: string; name: string; avatar: string; status: string;
@@ -40,11 +42,11 @@ function daysSince(iso: string) {
 }
 
 export default function TrainerDashboard() {
+  const { user } = useRequireAuth('trainer');
   const [students, setStudents] = useState<Student[]>([]);
 
   useEffect(() => {
-    fetch('/api/trainer/students')
-      .then((r) => r.json())
+    apiFetch<Student[]>('/api/trainer/students')
       .then(setStudents)
       .catch(() => setStudents([]));
   }, []);
@@ -68,7 +70,7 @@ export default function TrainerDashboard() {
             {todayFmt.toUpperCase()}
           </p>
           <h1 className="text-3xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>
-            Olá, Ana Paula!
+            Olá, {user?.name || 'Treinador'}!
           </h1>
           <p className="mt-1 text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
             Painel do treinador · {active.length} alunos ativos
