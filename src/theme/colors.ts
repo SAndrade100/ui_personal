@@ -1,9 +1,9 @@
 const colors = {
-  linen: '#F5F1EA',
-  khaki: '#D7C9B8',
-  camel: '#B2967D',
-  cocoa: '#7D5A44',
-  espresso: '#4A342A'
+  linen: '#FAF9F6',
+  khaki: '#9BF019',
+  camel: '#4BD200',
+  cocoa: '#008200',
+  espresso: '#004119'
 };
 
 export default colors;
