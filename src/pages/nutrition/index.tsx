@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/Header';
 import { apiFetch } from '../../lib/api';
+import {
+  ClipboardList, Salad, BookOpen, Clock,
+  Coffee, Apple, UtensilsCrossed, GlassWater, Moon, Sun, Utensils,
+  type LucideIcon,
+} from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type MacroKey = 'protein' | 'carbs' | 'fat';
@@ -120,10 +125,18 @@ export default function Nutrition() {
   const fmtDate = (iso: string) =>
     new Date(iso + 'T12:00').toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
 
-  const tabs: { key: Tab; label: string; emoji: string }[] = [
-    { key: 'plan',   label: 'Plano alimentar', emoji: '📋' },
-    { key: 'macros', label: 'Macros do dia',   emoji: '🥗' },
-    { key: 'diary',  label: 'Diário',          emoji: '📝' },
+  const ICON_MAP: Record<string, LucideIcon> = {
+    Coffee, Apple, UtensilsCrossed, GlassWater, Moon, Sun, Salad,
+    '☕': Coffee, '⛰️': Coffee,
+    '🍎': Apple, '🍽️': UtensilsCrossed,
+    '🥤': GlassWater, '🌙': Moon, '🌛': Moon, '🥗': Salad,
+  };
+  function getMealIcon(emoji: string): LucideIcon { return ICON_MAP[emoji] ?? Utensils; }
+
+  const tabs: { key: Tab; label: string; Icon: LucideIcon }[] = [
+    { key: 'plan',   label: 'Plano alimentar', Icon: ClipboardList },
+    { key: 'macros', label: 'Macros do dia',   Icon: Salad },
+    { key: 'diary',  label: 'Diário',          Icon: BookOpen },
   ];
 
   return (
@@ -149,13 +162,13 @@ export default function Nutrition() {
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all"
                 style={{
                   background: tab === t.key ? 'white' : 'rgba(255,255,255,0.1)',
                   color:      tab === t.key ? 'var(--color-espresso)' : 'rgba(255,255,255,0.7)',
                 }}
               >
-                {t.emoji} {t.label}
+                <t.Icon size={14} />{t.label}
               </button>
             ))}
           </div>
@@ -199,12 +212,14 @@ export default function Nutrition() {
                       className="w-full flex items-center gap-4 p-5 text-left"
                       onClick={() => setOpen(isOpen ? null : meal.id)}
                     >
-                      <span className="text-2xl">{meal.emoji}</span>
+                      <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--color-camel)', color: 'white' }}>
+                        {React.createElement(getMealIcon(meal.emoji), { size: 16 })}
+                      </span>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-sm" style={{ fontFamily: 'var(--font-heading)' }}>
                           {meal.name}
                         </div>
-                        <div className="text-xs mt-0.5" style={{ color: 'rgba(74,52,42,0.5)' }}>⏰ {meal.time}</div>
+                        <div className="flex items-center gap-1 text-xs mt-0.5" style={{ color: 'rgba(74,52,42,0.5)' }}><Clock size={10} /> {meal.time}</div>
                       </div>
                       <div className="text-right flex-shrink-0">
                         <div className="font-bold text-sm" style={{ color: 'var(--color-accent)' }}>{mealCals} kcal</div>

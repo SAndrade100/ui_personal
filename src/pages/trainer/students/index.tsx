@@ -4,6 +4,7 @@ import Header from '../../../components/Header';
 import Card from '../../../components/Card';
 import { Button } from '../../../components/Button';
 import { apiFetch } from '../../../lib/api';
+import { AlertTriangle } from 'lucide-react';
 
 type Student = {
   id: string; name: string; avatar: string; status: string;
@@ -152,9 +153,9 @@ export default function TrainerStudents() {
                           </span>
                         )}
                         {dormant && s.status === 'active' && (
-                          <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-semibold"
                             style={{ background: 'rgba(232,108,44,0.12)', color: 'var(--color-accent)' }}>
-                            ⚠ {daysSince(s.lastWorkout!)}d sem treinar
+                            <AlertTriangle size={10} /> {daysSince(s.lastWorkout!)}d sem treinar
                           </span>
                         )}
                         {behind && (

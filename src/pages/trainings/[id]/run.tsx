@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '../../../components/Header';
 import { Button } from '../../../components/Button';
 import { apiFetch } from '../../../lib/api';
+import { Trophy, Check } from 'lucide-react';
 
 type Exercise = { id: string; name: string; reps: string; description?: string; videoUrl?: string };
 type Training = { id: string; title: string; duration: number; exercises: Exercise[] };
@@ -82,7 +83,10 @@ export default function TrainingRun() {
         {done ? (
           /* Completion screen */
           <div className="flex-1 flex flex-col items-center justify-center text-center">
-            <div className="text-6xl mb-4" aria-label="Concluído">🎉</div>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 mx-auto"
+              style={{ background: 'linear-gradient(135deg, var(--color-camel), var(--color-accent))' }}>
+              <Trophy size={40} color="white" />
+            </div>
             <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>Treino concluído!</h2>
             <p className="text-sm mb-8" style={{ color: 'rgba(74,52,42,0.6)' }}>Excelente trabalho, Beatriz. Continue assim!</p>
             <Link href="/student">
@@ -149,7 +153,7 @@ export default function TrainingRun() {
                     color: idx <= current ? 'white' : 'var(--color-espresso)',
                   }}
                 >
-                  {idx < current ? '✓ ' : ''}{e.name}
+                  {idx < current && <Check size={10} className="inline mr-0.5" />}{e.name}
                 </div>
               ))}
             </div>
@@ -160,7 +164,7 @@ export default function TrainingRun() {
                 ← Anterior
               </Button>
               <Button variant="accent" fullWidth onClick={next}>
-                {isLast ? 'Finalizar treino 🎉' : 'Próximo exercício →'}
+                {isLast ? 'Finalizar treino' : 'Próximo exercício →'}
               </Button>
             </div>
           </div>

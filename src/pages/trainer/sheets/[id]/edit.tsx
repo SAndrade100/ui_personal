@@ -5,7 +5,7 @@ import Header from '../../../../components/Header';
 import Card from '../../../../components/Card';
 import { Button } from '../../../../components/Button';
 import { apiFetch } from '../../../../lib/api';
-import { ClipboardList, Plus, Trash2, Search } from 'lucide-react';
+import { ClipboardList, Plus, Trash2, Search, Check } from 'lucide-react';
 
 const WEEKDAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
@@ -154,7 +154,7 @@ export default function TrainerSheetEdit() {
                           opacity: added ? 0.6 : 1,
                           cursor: added ? 'default' : 'pointer',
                         }}>
-                        {added ? '✓ ' : '+ '}{t.title}
+                        {added ? <><Check size={11} className="inline mr-0.5" />{t.title}</> : <><Plus size={11} className="inline mr-0.5" />{t.title}</>}
                       </button>
                     );
                   })}
@@ -217,7 +217,7 @@ export default function TrainerSheetEdit() {
             <Button variant="ghost">Cancelar</Button>
           </Link>
           <Button variant="accent" onClick={handleSave}>
-            {saved ? '✓ Salvo!' : 'Salvar ficha'}
+            {saved ? <><Check size={14} className="inline mr-1" />Salvo!</> : 'Salvar ficha'}
           </Button>
         </div>
       </div>

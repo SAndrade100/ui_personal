@@ -5,6 +5,7 @@ import Header from '../../../../components/Header';
 import Card from '../../../../components/Card';
 import { Button } from '../../../../components/Button';
 import { apiFetch } from '../../../../lib/api';
+import { Coffee, Apple, UtensilsCrossed, GlassWater, Moon, Sun, Salad, Check, type LucideIcon } from 'lucide-react';
 
 type MacroKey = 'protein' | 'carbs' | 'fat';
 type FoodItem = { name: string; calories: number; protein: number; carbs: number; fat: number };
@@ -15,7 +16,16 @@ type Plan = {
   meals: Meal[];
 };
 
-const MEAL_EMOJIS = ['☕', '🍎', '🍽️', '🥤', '🌙', '🌛', '🥗'];
+const MEAL_ICONS: { name: string; Icon: LucideIcon }[] = [
+  { name: 'Coffee',          Icon: Coffee },
+  { name: 'Apple',           Icon: Apple },
+  { name: 'UtensilsCrossed', Icon: UtensilsCrossed },
+  { name: 'GlassWater',      Icon: GlassWater },
+  { name: 'Moon',            Icon: Moon },
+  { name: 'Sun',             Icon: Sun },
+  { name: 'Salad',           Icon: Salad },
+];
+function getMealIcon(name: string): LucideIcon { return MEAL_ICONS.find((m) => m.name === name)?.Icon ?? UtensilsCrossed; }
 
 function uid() { return 'm' + Math.random().toString(36).slice(2, 8); }
 function fuid() { return 'f' + Math.random().toString(36).slice(2, 8); }
@@ -49,7 +59,7 @@ export default function TrainerNutritionEdit() {
       ...prev,
       meals: [...prev.meals, {
         id: uid(), name: 'Nova refeição', time: '12:00',
-        emoji: MEAL_EMOJIS[prev.meals.length % MEAL_EMOJIS.length], items: [],
+        emoji: MEAL_ICONS[prev.meals.length % MEAL_ICONS.length].name, items: [],
       }],
     }));
   }
@@ -169,10 +179,22 @@ export default function TrainerNutritionEdit() {
           <Card key={meal.id}>
             {/* Meal header */}
             <div className="flex items-center gap-3 flex-wrap mb-5">
-              <select className="field !w-16 !text-center !text-lg"
-                value={meal.emoji} onChange={(e) => updateMeal(mi, 'emoji', e.target.value)}>
-                {MEAL_EMOJIS.map((em) => <option key={em}>{em}</option>)}
-              </select>
+              <div className="flex gap-1">
+                {MEAL_ICONS.map(({ name, Icon }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => updateMeal(mi, 'emoji', name)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
+                    style={{
+                      background: meal.emoji === name ? 'var(--color-camel)' : 'rgba(74,52,42,0.08)',
+                      color: meal.emoji === name ? 'white' : 'var(--color-cocoa)',
+                    }}
+                  >
+                    <Icon size={15} />
+                  </button>
+                ))}
+              </div>
               <div className="flex-1 grid grid-cols-2 gap-3">
                 <input className="field" value={meal.name}
                   onChange={(e) => updateMeal(mi, 'name', e.target.value)} placeholder="Nome da refeição" />
@@ -207,9 +229,10 @@ export default function TrainerNutritionEdit() {
                     </div>
                   ))}
                   <button onClick={() => removeItem(mi, ii)}
-                    className="text-xs px-2 py-1 rounded-lg"
-                    style={{ color: 'rgba(232,108,44,0.7)', background: 'rgba(232,108,44,0.08)' }}>
-                    ✕
+                    className="w-7 h-7 flex items-center justify-center rounded-lg"
+                    style={{ color: 'rgba(232,108,44,0.7)', background: 'rgba(232,108,44,0.08)' }}
+                    aria-label="Remover alimento">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
                   </button>
                 </div>
               ))}
@@ -225,7 +248,7 @@ export default function TrainerNutritionEdit() {
             <Button variant="ghost">Cancelar</Button>
           </Link>
           <Button variant="accent" onClick={handleSave}>
-            {saved ? '✓ Salvo!' : 'Salvar plano'}
+            {saved ? <><Check size={14} className="inline mr-1" />Salvo!</> : 'Salvar plano'}
           </Button>
         </div>
       </div>

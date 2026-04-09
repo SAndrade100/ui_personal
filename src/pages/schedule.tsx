@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { Button } from '../components/Button';
 import { apiFetch } from '../lib/api';
 import { useRequireAuth } from '../lib/auth';
-import { Dumbbell, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Dumbbell, ChevronLeft, ChevronRight, Check, Undo2 } from 'lucide-react';
 
 type Session = { id: string; trainingId: string; date: string; time: string; title: string; done: boolean };
 
@@ -259,7 +259,7 @@ export default function Schedule() {
                             style={{ background: s.done ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.15)', color: 'white' }}
                             aria-label={s.done ? 'Desmarcar' : 'Concluir'}
                           >
-                            {s.done ? '↩' : '✓'}
+                            {s.done ? <Undo2 size={12} /> : <Check size={12} />}
                           </button>
                         </div>
                       </li>

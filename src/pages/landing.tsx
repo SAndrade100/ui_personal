@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Dumbbell, Calendar, Activity, Flame, Heart } from 'lucide-react';
+import { Dumbbell, Calendar, Activity, Flame, Heart, User } from 'lucide-react';
 
 export default function Landing() {
   const router = useRouter();
@@ -734,16 +734,16 @@ export default function Landing() {
           <h2 className="section-title">O que os alunos dizem</h2>
           <div className="testi-grid">
             {[
-              { text: 'Em 4 meses perdi 12kg e ganhei uma disposição que não tinha há anos. O acompanhamento pelo app fez toda a diferença.', name: 'Camila R.', info: 'Programa Emagrecimento · 4 meses', avatar: '👩' },
-              { text: 'Nunca consegui manter constância em academia. Com os treinos personalizados e o suporte, nunca faltei uma semana.', name: 'Rafael M.', info: 'Hipertrofia · 6 meses', avatar: '👨' },
-              { text: 'Voltei a correr sem dor no joelho depois de anos. A abordagem funcional mudou minha relação com o exercício.', name: 'Ana L.', info: 'Saúde & Qualidade · 3 meses', avatar: '🧑' },
-              { text: 'Os treinos são desafiadores, mas sempre dentro do possível. Sinto evolução real a cada semana.', name: 'Lucas T.', info: 'Hipertrofia · 5 meses', avatar: '👦' },
+              { text: 'Em 4 meses perdi 12kg e ganhei uma disposição que não tinha há anos. O acompanhamento pelo app fez toda a diferença.', name: 'Camila R.', info: 'Programa Emagrecimento · 4 meses' },
+              { text: 'Nunca consegui manter constância em academia. Com os treinos personalizados e o suporte, nunca faltei uma semana.', name: 'Rafael M.', info: 'Hipertrofia · 6 meses' },
+              { text: 'Voltei a correr sem dor no joelho depois de anos. A abordagem funcional mudou minha relação com o exercício.', name: 'Ana L.', info: 'Saúde & Qualidade · 3 meses' },
+              { text: 'Os treinos são desafiadores, mas sempre dentro do possível. Sinto evolução real a cada semana.', name: 'Lucas T.', info: 'Hipertrofia · 5 meses' },
             ].map((t, i) => (
               <div key={i} className="testi-card">
                 <div className="testi-stars">★★★★★</div>
                 <p className="testi-text">&ldquo;{t.text}&rdquo;</p>
                 <div className="testi-author">
-                  <div className="author-avatar">{t.avatar}</div>
+                  <div className="author-avatar"><User size={20} color="white" /></div>
                   <div>
                     <div className="author-name">{t.name}</div>
                     <div className="author-info">{t.info}</div>
