@@ -20,6 +20,7 @@ const trainerLinks = [
   { href: '/trainer',          label: 'Dashboard', exact: true  },
   { href: '/trainer/students', label: 'Alunos',    exact: false },
   { href: '/trainer/trainings',label: 'Treinos',   exact: false },
+  { href: '/trainer/sheets',   label: 'Fichas',    exact: false },
   { href: '/trainer/schedule', label: 'Agenda',    exact: true  },
   { href: '/trainer/chat',     label: 'Chat',      exact: true  },
 ];

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import { apiFetch } from '../../lib/api';
+import { Dumbbell } from 'lucide-react';
 
 type Training = { id: string; title: string; duration: number; level: string };
 
@@ -34,7 +35,7 @@ export default function Trainings() {
 
           {/* Search inside hero */}
           <div className="mt-6 relative max-w-sm">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'rgba(255,255,255,0.45)', fontSize: '1rem' }}>🔍</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'rgba(255,255,255,0.45)' }}><Dumbbell size={16} /></span>
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -81,9 +82,9 @@ export default function Trainings() {
                     <p className="mt-1 text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>{t.duration} min</p>
                   </div>
                   <span
-                    className="text-2xl mt-1 group-hover:scale-110 transition-transform"
+                    className="mt-1 group-hover:scale-110 transition-transform"
                     aria-hidden
-                  >🏋️</span>
+                  ><Dumbbell size={24} style={{ color: 'rgba(255,255,255,0.7)' }} /></span>
                 </div>
               </div>
               <div

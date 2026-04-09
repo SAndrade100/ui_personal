@@ -5,6 +5,7 @@ import Header from '../../../../components/Header';
 import Card from '../../../../components/Card';
 import { Button } from '../../../../components/Button';
 import { apiFetch } from '../../../../lib/api';
+import { BookOpen, Plus } from 'lucide-react';
 
 type Exercise = { id: string; name: string; reps: string; rest: string; description: string; videoUrl: string };
 type Training = { id: string; title: string; duration: number; level: string; category: string; exercises: Exercise[] };
@@ -169,9 +170,9 @@ export default function TrainerTrainingEdit() {
             </p>
             <div className="flex gap-2">
               <Button variant="ghost" onClick={() => setShowLibrary(!showLibrary)}>
-                📚 Biblioteca
+                <BookOpen size={16} /> Biblioteca
               </Button>
-              <Button variant="ghost" onClick={addExercise}>+ Novo exercício</Button>
+              <Button variant="ghost" onClick={addExercise}><Plus size={16} /> Novo exercício</Button>
             </div>
           </div>
 

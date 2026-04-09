@@ -4,6 +4,8 @@ import Header from '../../../components/Header';
 import Card from '../../../components/Card';
 import { Button } from '../../../components/Button';
 import { apiFetch } from '../../../lib/api';
+import { Dumbbell, Flame, Zap, PersonStanding, Timer, Search, Plus, Pencil, Trash2 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 type Exercise = { id: string; name: string; reps: string; rest: string };
 type Training = { id: string; title: string; duration: number; level: string; category: string; exercises: Exercise[] };
@@ -11,8 +13,8 @@ type Training = { id: string; title: string; duration: number; level: string; ca
 const levelColor: Record<string, string> = {
   Beginner: '#22c55e', Intermediate: '#f59e0b', Advanced: '#E86C2C',
 };
-const categoryEmoji: Record<string, string> = {
-  'Full Body': '🏋️', HIIT: '🔥', Força: '💪', Pernas: '🦵', Funcional: '⚡',
+const categoryIcon: Record<string, LucideIcon> = {
+  'Full Body': Dumbbell, HIIT: Flame, Força: Dumbbell, Pernas: PersonStanding, Funcional: Zap,
 };
 
 export default function TrainerTrainings() {
@@ -58,15 +60,18 @@ export default function TrainerTrainings() {
       <div className="app-container py-8">
         {/* Search + New */}
         <div className="flex gap-3 mb-6 flex-wrap">
-          <input
-            type="text"
-            placeholder="Buscar por título…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            className="field flex-1"
-          />
+          <div className="relative flex-1">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'rgba(74,52,42,0.4)' }} />
+            <input
+              type="text"
+              placeholder="Buscar por título…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              className="field pl-9 w-full flex-1"
+            />
+          </div>
           <Link href="/trainer/trainings/new/edit">
-            <Button variant="accent">+ Novo treino</Button>
+            <Button variant="accent"><Plus size={16} /> Novo treino</Button>
           </Link>
         </div>
 
@@ -74,7 +79,10 @@ export default function TrainerTrainings() {
           {trainings.map((t) => (
             <Card key={t.id}>
               <div className="flex items-center gap-4 flex-wrap">
-                <div className="text-3xl flex-shrink-0">{categoryEmoji[t.category] ?? '🏋️'}</div>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'rgba(178,150,125,0.15)' }}>
+                  {React.createElement(categoryIcon[t.category] ?? Dumbbell, { size: 20, style: { color: 'var(--color-camel)' } })}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-0.5">
                     <span className="font-bold">{t.title}</span>
@@ -87,8 +95,8 @@ export default function TrainerTrainings() {
                       {t.category}
                     </span>
                   </div>
-                  <div className="text-xs" style={{ color: 'rgba(74,52,42,0.5)' }}>
-                    ⏱ {t.duration} min · {t.exercises.length} exercícios
+                  <div className="text-xs flex items-center gap-1" style={{ color: 'rgba(74,52,42,0.5)' }}>
+                    <Timer size={12} /> {t.duration} min · {t.exercises.length} exercícios
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -99,13 +107,13 @@ export default function TrainerTrainings() {
                     {expanded === t.id ? 'Ocultar' : 'Exercícios'}
                   </button>
                   <Link href={`/trainer/trainings/${t.id}/edit`}>
-                    <Button variant="outline" className="!py-1.5 !px-4 !text-xs">Editar</Button>
+                    <Button variant="outline" className="!py-1.5 !px-4 !text-xs"><Pencil size={14} /> Editar</Button>
                   </Link>
                   <button
                     onClick={() => handleDelete(t.id, t.title)}
-                    className="text-xs px-3 py-1.5 rounded-full font-medium"
+                    className="text-xs px-3 py-1.5 rounded-full font-medium flex items-center gap-1"
                     style={{ background: 'rgba(232,108,44,0.08)', color: 'var(--color-accent)' }}>
-                    Excluir
+                    <Trash2 size={14} /> Excluir
                   </button>
                 </div>
               </div>

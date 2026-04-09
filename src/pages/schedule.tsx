@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import { Button } from '../components/Button';
 import { apiFetch } from '../lib/api';
 import { useRequireAuth } from '../lib/auth';
+import { Dumbbell, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type Session = { id: string; trainingId: string; date: string; time: string; title: string; done: boolean };
 
@@ -24,9 +25,7 @@ function toISO(y: number, m: number, d: number) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
-const categoryEmoji: Record<string, string> = {
-  'Full Body': '🏋️', HIIT: '🔥', Força: '💪', Pernas: '🦵', Funcional: '⚡',
-};
+const categoryEmoji: Record<string, string> = {};
 
 
 
@@ -123,7 +122,7 @@ export default function Schedule() {
                 className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all hover:bg-[rgba(74,52,42,0.1)]"
                 aria-label="Mês anterior"
               >
-                ‹
+                <ChevronLeft size={18} />
               </button>
               <h2 className="text-lg font-semibold" style={{ fontFamily: 'var(--font-heading)' }}>
                 {MONTHS[month]} {year}
@@ -133,7 +132,7 @@ export default function Schedule() {
                 className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all hover:bg-[rgba(74,52,42,0.1)]"
                 aria-label="Próximo mês"
               >
-                ›
+                <ChevronRight size={18} />
               </button>
             </div>
 
@@ -303,7 +302,7 @@ export default function Schedule() {
                           <div className="text-xs" style={{ color: 'rgba(74,52,42,0.55)' }}>{s.time}</div>
                         </div>
                         <span className="text-base" aria-hidden>
-                          {categoryEmoji[s.title.split(' ')[0]] ?? '🏋️'}
+                          <Dumbbell size={18} style={{ color: 'var(--color-camel)' }} />
                         </span>
                       </li>
                     );

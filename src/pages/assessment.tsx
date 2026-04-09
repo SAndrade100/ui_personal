@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { apiFetch } from '../lib/api';
 import { useRequireAuth } from '../lib/auth';
+import { BarChart3, TrendingUp } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Measurements = Record<string, number>;
@@ -120,7 +121,7 @@ export default function Assessment() {
 
           {/* Tabs */}
           <div className="flex gap-2 mt-6 flex-wrap">
-            {([['latest', '📊 Última avaliação'], ['evolution', '📈 Evolução das medidas']] as [Tab, string][]).map(([k, l]) => (
+            {([['latest', 'Última avaliação'], ['evolution', 'Evolução das medidas']] as [Tab, string][]).map(([k, l]) => (
               <button key={k} onClick={() => setTab(k)}
                 className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
                 style={{

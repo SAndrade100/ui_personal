@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { apiFetch } from '../lib/api';
 import { useRequireAuth } from '../lib/auth';
+import { Dumbbell, Flame, HeartPulse, Footprints } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type WeightEntry = { date: string; value: number };
@@ -155,8 +157,8 @@ function WeeklyChart({ data }: { data: WeekEntry[] }) {
 }
 
 // ── Category styles ───────────────────────────────────────────────────────────
-const catEmoji: Record<string, string> = {
-  'Força': '🏋️', 'Core': '🔥', 'Cardio': '🏃', 'Costas': '💪',
+const catIcon: Record<string, LucideIcon> = {
+  'Força': Dumbbell, 'Core': Flame, 'Cardio': HeartPulse, 'Costas': Footprints,
 };
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -298,10 +300,10 @@ export default function Progress() {
                 style={{ background: 'var(--color-khaki)', boxShadow: 'var(--card-shadow)' }}
               >
                 <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                  className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{ background: 'rgba(178,150,125,0.3)' }}
                 >
-                  {catEmoji[rec.category] ?? '🏅'}
+                  {React.createElement(catIcon[rec.category] ?? Dumbbell, { size: 22, style: { color: 'var(--color-camel)' } })}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs font-semibold" style={{ color: 'var(--color-camel)' }}>{rec.category.toUpperCase()}</div>

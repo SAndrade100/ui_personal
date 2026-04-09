@@ -5,6 +5,7 @@ import Card from '../../components/Card';
 import { Button } from '../../components/Button';
 import { apiFetch } from '../../lib/api';
 import { useRequireAuth } from '../../lib/auth';
+import { Calendar, Dumbbell, MessageCircle, Users, Flame, AlertTriangle } from 'lucide-react';
 
 type Student = {
   id: string; name: string; avatar: string; status: string;
@@ -99,8 +100,8 @@ export default function TrainerDashboard() {
         {/* Alerts */}
         {atRisk.length > 0 && (
           <div className="rounded-card p-5" style={{ background: 'rgba(232,108,44,0.08)', border: '1px solid rgba(232,108,44,0.2)' }}>
-            <p className="text-xs font-semibold tracking-widest mb-3" style={{ color: 'var(--color-accent)' }}>
-              ⚠ ALUNOS QUE PRECISAM DE ATENÇÃO
+            <p className="text-xs font-semibold tracking-widest mb-3 flex items-center gap-1.5" style={{ color: 'var(--color-accent)' }}>
+              <AlertTriangle size={14} /> ALUNOS QUE PRECISAM DE ATENÇÃO
             </p>
             <div className="space-y-2">
               {atRisk.map((s) => (
@@ -174,7 +175,7 @@ export default function TrainerDashboard() {
                   <div className="flex items-center justify-between">
                     <div className="text-xs" style={{ color: 'rgba(74,52,42,0.5)' }}>
                       {s.streak > 0
-                        ? <span>🔥 {s.streak} dias seguidos</span>
+                        ? <span className="flex items-center gap-1"><Flame size={14} style={{ color: 'var(--color-accent)' }} /> {s.streak} dias seguidos</span>
                         : <span style={{ color: 'rgba(74,52,42,0.35)' }}>Sem sequência ativa</span>
                       }
                     </div>
@@ -193,15 +194,15 @@ export default function TrainerDashboard() {
           <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-heading)' }}>Ações rápidas</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { label: 'Agenda',       href: '/trainer/schedule',  icon: '📅' },
-              { label: 'Treinos',      href: '/trainer/trainings', icon: '🏋️' },
-              { label: 'Chat',         href: '/trainer/chat',      icon: '💬' },
-              { label: 'Alunos',       href: '/trainer/students',  icon: '👥' },
-            ].map(({ label, href, icon }) => (
+              { label: 'Agenda',       href: '/trainer/schedule',  Icon: Calendar },
+              { label: 'Treinos',      href: '/trainer/trainings', Icon: Dumbbell },
+              { label: 'Chat',         href: '/trainer/chat',      Icon: MessageCircle },
+              { label: 'Alunos',       href: '/trainer/students',  Icon: Users },
+            ].map(({ label, href, Icon }) => (
               <Link key={href} href={href}>
                 <div className="rounded-card p-5 text-center cursor-pointer hover:scale-[1.02] transition-transform"
                   style={{ background: 'var(--color-khaki)', boxShadow: 'var(--card-shadow)' }}>
-                  <div className="text-3xl mb-2">{icon}</div>
+                  <Icon size={28} className="mx-auto mb-2" style={{ color: 'var(--color-camel)' }} />
                   <div className="text-sm font-semibold">{label}</div>
                 </div>
               </Link>

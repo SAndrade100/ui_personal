@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { apiFetch } from '../lib/api';
 import { useRequireAuth } from '../lib/auth';
+import { Target, Calendar, UserCheck, Gem } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 type UserProfile = {
   id: string;
@@ -206,13 +208,13 @@ export default function Profile() {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { emoji: '🎯', label: 'Objetivo',   value: user.goal           },
-                { emoji: '📅', label: 'Início',     value: joined              },
-                { emoji: '👩‍💼', label: 'Personal',  value: user.trainer        },
-                { emoji: '💎', label: 'Plano',      value: user.plan           },
-              ].map(({ emoji, label, value }) => (
+                { Icon: Target,    label: 'Objetivo',   value: user.goal           },
+                { Icon: Calendar,  label: 'Início',     value: joined              },
+                { Icon: UserCheck, label: 'Personal',   value: user.trainer        },
+                { Icon: Gem,       label: 'Plano',      value: user.plan           },
+              ].map(({ Icon, label, value }) => (
                 <div key={label} className="flex items-start gap-3">
-                  <span className="text-2xl flex-shrink-0">{emoji}</span>
+                  <Icon size={22} className="flex-shrink-0 mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }} />
                   <div>
                     <div className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>{label.toUpperCase()}</div>
                     <div className="text-sm font-medium mt-1 text-white">{value}</div>

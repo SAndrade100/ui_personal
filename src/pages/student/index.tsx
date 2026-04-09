@@ -5,6 +5,7 @@ import { useRequireAuth } from '../../lib/auth';
 import { apiFetch } from '../../lib/api';
 import Link from 'next/link';
 import { Button } from '../../components/Button';
+import { Flame } from 'lucide-react';
 
 type Session = { id: string; trainingId: string; date: string; time: string; title: string; done: boolean };
 type Summary = { totalWorkouts: number; totalHours: number; weightLost: number; streak: number };
@@ -104,7 +105,7 @@ export default function StudentHome() {
                 <div className="text-xs" style={{ color: 'rgba(74,52,42,0.55)' }}>Sequência atual</div>
                 <div className="flex items-baseline gap-2 mt-0.5">
                   <span className="text-3xl font-bold">{summary?.streak ?? '—'}</span>
-                  <span className="text-sm" style={{ color: 'var(--color-camel)' }}>dias seguidos 🔥</span>
+                  <span className="text-sm flex items-center gap-1" style={{ color: 'var(--color-camel)' }}>dias seguidos <Flame size={14} style={{ color: 'var(--color-accent)' }} /></span>
                 </div>
               </div>
             </div>

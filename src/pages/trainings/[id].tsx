@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '../../components/Header';
 import { Button } from '../../components/Button';
 import { apiFetch } from '../../lib/api';
+import { Timer, BarChart3, Dumbbell } from 'lucide-react';
 
 type Exercise = { id: string; name: string; reps: string };
 type Training = { id: string; title: string; duration: number; level: string; exercises: Exercise[] };
@@ -39,9 +40,9 @@ export default function TrainingDetail() {
           <p className="text-xs font-semibold tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.5)' }}>TREINO</p>
           <h1 className="text-4xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{t.title}</h1>
           <div className="mt-3 flex items-center gap-4 flex-wrap">
-            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>⏱ {t.duration} min</span>
-            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>📊 {t.level}</span>
-            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>💪 {t.exercises.length} exercícios</span>
+            <span className="text-sm flex items-center gap-1" style={{ color: 'rgba(255,255,255,0.65)' }}><Timer size={14} /> {t.duration} min</span>
+            <span className="text-sm flex items-center gap-1" style={{ color: 'rgba(255,255,255,0.65)' }}><BarChart3 size={14} /> {t.level}</span>
+            <span className="text-sm flex items-center gap-1" style={{ color: 'rgba(255,255,255,0.65)' }}><Dumbbell size={14} /> {t.exercises.length} exercícios</span>
           </div>
         </div>
       </div>
@@ -68,7 +69,7 @@ export default function TrainingDetail() {
                   <div className="font-semibold text-sm">{e.name}</div>
                   <div className="text-xs mt-0.5" style={{ color: 'rgba(74,52,42,0.6)' }}>{e.reps}</div>
                 </div>
-                <span className="text-lg" aria-hidden>🏋️</span>
+                <Dumbbell size={18} style={{ color: 'var(--color-camel)' }} aria-hidden />
               </div>
             ))}
           </div>

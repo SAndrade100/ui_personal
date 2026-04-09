@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { Dumbbell, Calendar, Activity, Flame, Heart } from 'lucide-react';
 
 export default function Landing() {
   const router = useRouter();
@@ -638,7 +639,7 @@ export default function Landing() {
           <div className="hero-visual">
             <div className="hero-card">
               <div className="program-badge">
-                <div className="badge-icon">🏋️</div>
+                <div className="badge-icon"><Dumbbell size={22} /></div>
                 <div>
                   <div className="badge-title">Programa Ativo</div>
                   <div className="badge-sub">Hipertrofia — Semana 6/12</div>
@@ -663,7 +664,7 @@ export default function Landing() {
                 </div>
               </div>
               <div className="next-session">
-                <div className="session-icon">📅</div>
+                <div className="session-icon"><Calendar size={20} /></div>
                 <div>
                   <div className="session-label">Próxima sessão</div>
                   <div className="session-time">Hoje, 18h — Treino B (Costas)</div>
@@ -679,7 +680,7 @@ export default function Landing() {
         <div className="section-inner">
           <div className="about-grid">
             <div className="about-image">
-              <div className="about-img-box">🏃‍♂️</div>
+              <div className="about-img-box"><Activity size={48} /></div>
               <div className="about-float">
                 <div className="float-num">8+</div>
                 <div className="float-label">Anos de<br />experiência</div>
@@ -711,15 +712,15 @@ export default function Landing() {
           <p className="section-sub">Seja qual for seu objetivo, existe um programa desenhado para chegar lá.</p>
           <div className="cards-grid">
             {[
-              { emoji: '💪', name: 'Hipertrofia', desc: 'Ganho de massa muscular com progressão de carga inteligente e periodização avançada.', detail: '3–5× por semana · 60–75 min' },
-              { emoji: '🔥', name: 'Emagrecimento', desc: 'Déficit calórico controlado, treinos HIIT e acompanhamento nutricional integrado.', detail: '4× por semana · 50 min', featured: true },
-              { emoji: '🧘', name: 'Saúde & Qualidade de Vida', desc: 'Mobilidade, força funcional e bem-estar para quem quer se mover melhor no dia a dia.', detail: '2–3× por semana · 45 min' },
+              { Icon: Dumbbell, name: 'Hipertrofia', desc: 'Ganho de massa muscular com progressão de carga inteligente e periodização avançada.', detail: '3–5× por semana · 60–75 min' },
+              { Icon: Flame, name: 'Emagrecimento', desc: 'Déficit calórico controlado, treinos HIIT e acompanhamento nutricional integrado.', detail: '4× por semana · 50 min', featured: true },
+              { Icon: Heart, name: 'Saúde & Qualidade de Vida', desc: 'Mobilidade, força funcional e bem-estar para quem quer se mover melhor no dia a dia.', detail: '2–3× por semana · 45 min' },
             ].map((p, i) => (
               <div key={i} className={`prog-card${p.featured ? ' featured' : ''}`}>
-                <div className="prog-emoji">{p.emoji}</div>
+                <div className="prog-emoji"><p.Icon size={28} /></div>
                 <div className="prog-name">{p.name}</div>
                 <div className="prog-desc">{p.desc}</div>
-                <div className="prog-detail">📅 {p.detail}</div>
+                <div className="prog-detail"><Calendar size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />{p.detail}</div>
               </div>
             ))}
           </div>
