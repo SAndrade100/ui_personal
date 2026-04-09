@@ -1,25 +1,35 @@
 import React from 'react';
+import { Button as UiButton, buttonVariants } from './ui/button';
+import type { ButtonProps as UiButtonProps } from './ui/button';
+import { cn } from '@/lib/utils';
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'ghost' | 'accent' | 'outline' | 'outline-white';
+/** Mapeamento do variant legado para o variant shadcn/ui */
+type LegacyVariant = 'primary' | 'ghost' | 'accent' | 'outline' | 'outline-white';
+const variantMap: Record<LegacyVariant, UiButtonProps['variant']> = {
+  primary:        'default',
+  ghost:          'ghost',
+  accent:         'accent',
+  outline:        'outline',
+  'outline-white':'outline-white',
+};
+
+type Props = Omit<UiButtonProps, 'variant'> & {
+  variant?: LegacyVariant | UiButtonProps['variant'];
   fullWidth?: boolean;
 };
 
-export const Button: React.FC<Props> = ({ variant = 'primary', children, className, fullWidth, ...rest }) => {
-  const base = 'px-5 py-2.5 font-medium text-sm inline-flex items-center justify-center gap-2 transition-all duration-200 select-none cursor-pointer';
-  const rounded = 'rounded-[var(--radius-btn)]';
-  let cls = '';
-  if (variant === 'primary')       cls = `${base} ${rounded} bg-camel text-white hover:bg-cocoa shadow hover:shadow-md active:scale-95`;
-  if (variant === 'accent')        cls = `${base} ${rounded} bg-[var(--color-accent)] text-white hover:opacity-90 shadow hover:shadow-md active:scale-95`;
-  if (variant === 'outline')       cls = `${base} ${rounded} bg-transparent border-2 border-camel text-espresso hover:bg-[rgba(178,150,125,0.08)] active:scale-95`;
-  if (variant === 'outline-white') cls = `${base} ${rounded} bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white active:scale-95`;
-  if (variant === 'ghost')         cls = `${base} ${rounded} bg-transparent text-camel hover:bg-[rgba(178,150,125,0.1)] active:scale-95`;
-  const merged = `${cls}${fullWidth ? ' w-full' : ''}${className ? ' ' + className : ''}`.trim();
+export const Button: React.FC<Props> = ({ variant = 'primary', fullWidth, className, ...rest }) => {
+  const mapped = variantMap[variant as LegacyVariant] ?? (variant as UiButtonProps['variant']);
   return (
-    <button className={merged} {...rest}>
-      {children}
-    </button>
+    <UiButton
+      variant={mapped}
+      className={cn(fullWidth && 'w-full', className)}
+      {...rest}
+    />
   );
 };
 
+export { buttonVariants };
 export default Button;
+
+

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useAuth } from '../lib/auth';
+import { cn } from '@/lib/utils';
 
 const studentLinks = [
   { href: '/student',     label: 'Home',       exact: true  },
@@ -39,13 +40,13 @@ export const Nav: React.FC<Props> = ({ vertical = false, onNavigate }) => {
             key={href}
             href={href}
             onClick={onNavigate}
-            className={`font-medium px-3 rounded-full transition-all ${
-              vertical ? 'text-base py-2.5' : 'text-sm py-1.5'
-            } ${
+            className={cn(
+              'font-medium px-3 rounded-full transition-all duration-150',
+              vertical ? 'text-base py-2.5' : 'text-sm py-1.5',
               active
-                ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                : 'text-espresso hover:bg-[rgba(178,150,125,0.12)]'
-            }`}
+                ? 'bg-accent text-accent-foreground shadow-sm'
+                : 'text-foreground/70 hover:text-foreground hover:bg-primary/10'
+            )}
           >
             {label}
           </Link>
@@ -56,4 +57,5 @@ export const Nav: React.FC<Props> = ({ vertical = false, onNavigate }) => {
 };
 
 export default Nav;
+
 

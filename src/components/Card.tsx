@@ -1,4 +1,13 @@
 import React from 'react';
+import {
+  Card as UiCard,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+} from './ui/card';
+import { cn } from '@/lib/utils';
 
 type Props = {
   children: React.ReactNode;
@@ -7,21 +16,28 @@ type Props = {
 };
 
 export const Card: React.FC<Props> = ({ children, className = '', variant = 'default' }) => {
-  const isDark = variant === 'dark';
+  if (variant === 'dark') {
+    return (
+      <div
+        className={cn(
+          'rounded-lg p-6 text-white shadow-[var(--card-shadow-dark)]',
+          className
+        )}
+        style={{
+          background: 'linear-gradient(135deg, var(--color-hero-from) 0%, var(--color-hero-to) 100%)',
+        }}
+      >
+        {children}
+      </div>
+    );
+  }
   return (
-    <div
-      className={`rounded-card p-6 ${className}`}
-      style={{
-        background: isDark
-          ? 'linear-gradient(135deg, var(--color-hero-from) 0%, var(--color-hero-to) 100%)'
-          : 'var(--color-khaki)',
-        boxShadow: isDark ? 'var(--card-shadow-dark)' : 'var(--card-shadow)',
-        color: isDark ? 'white' : 'inherit',
-      }}
-    >
+    <UiCard className={cn('p-6', className)}>
       {children}
-    </div>
+    </UiCard>
   );
 };
 
+export { CardHeader, CardContent, CardFooter, CardTitle, CardDescription };
 export default Card;
+

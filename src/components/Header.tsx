@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../lib/auth';
 import Nav from './Nav';
+import { Button } from './ui/button';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { Separator } from './ui/separator';
+import { cn } from '@/lib/utils';
 
 export const Header: React.FC = () => {
   const { user, signout } = useAuth();
@@ -15,24 +19,18 @@ export const Header: React.FC = () => {
   return (
     <>
       <header
-        className="sticky top-0 z-50 py-3 px-4 md:py-4 md:px-6"
-        style={{
-          background: 'rgba(245,241,234,0.92)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          boxShadow: 'var(--header-shadow)',
-        }}
+        className={cn(
+          'sticky top-0 z-50 py-3 px-4 md:py-4 md:px-6',
+          'bg-background/90 backdrop-blur-md border-b border-border/50',
+          'shadow-[var(--header-shadow)]'
+        )}
       >
-        <div className="flex items-center justify-between" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div className="flex items-center justify-between max-w-[1000px] mx-auto">
 
           {/* Logo */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <span
-              className="inline-block w-2.5 h-2.5 rounded-full"
-              style={{ background: 'var(--color-accent)' }}
-              aria-hidden
-            />
-            <span className="text-lg md:text-xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-accent" aria-hidden />
+            <span className="text-lg md:text-xl font-bold font-heading tracking-tight">
               Bia Personal
             </span>
           </div>
@@ -44,57 +42,39 @@ export const Header: React.FC = () => {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            {/* Desktop: avatar + sair */}
             {user && (
-              <div
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-sm"
-                style={{ background: 'var(--color-khaki)' }}
-              >
-                <span
-                  className="inline-block w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                  style={{ background: 'var(--color-cocoa)' }}
-                >
-                  {user.name[0]}
-                </span>
-                <span className="font-medium">{user.name}</span>
+              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-secondary">
+                <Avatar className="w-6 h-6">
+                  <AvatarFallback className="text-[10px]">{user.name[0]}</AvatarFallback>
+                </Avatar>
+                <span className="font-medium text-secondary-foreground">{user.name}</span>
               </div>
             )}
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleSignout}
-              className="hidden md:block text-xs font-medium px-3 py-1.5 rounded-full border border-transparent hover:border-camel text-[rgba(74,52,42,0.6)] hover:text-espresso"
+              className="hidden md:inline-flex text-muted-foreground hover:text-foreground"
             >
               Sair
-            </button>
+            </Button>
 
-            {/* Mobile: hamburger */}
+            {/* Hamburguer mobile */}
             <button
-              className="md:hidden flex flex-col gap-1.5 w-9 h-9 items-center justify-center rounded-xl transition-all"
-              style={{ background: open ? 'var(--color-khaki)' : 'transparent' }}
+              className={cn(
+                'md:hidden flex flex-col gap-1.5 w-9 h-9 items-center justify-center rounded-xl transition-all',
+                open ? 'bg-secondary' : 'bg-transparent'
+              )}
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? 'Fechar menu' : 'Abrir menu'}
               aria-expanded={open}
             >
-              <span
-                className="block h-0.5 w-5 rounded-full transition-all"
-                style={{
-                  background: 'var(--color-espresso)',
-                  transform: open ? 'translateY(8px) rotate(45deg)' : 'none',
-                }}
-              />
-              <span
-                className="block h-0.5 w-5 rounded-full transition-all"
-                style={{
-                  background: 'var(--color-espresso)',
-                  opacity: open ? 0 : 1,
-                }}
-              />
-              <span
-                className="block h-0.5 w-5 rounded-full transition-all"
-                style={{
-                  background: 'var(--color-espresso)',
-                  transform: open ? 'translateY(-8px) rotate(-45deg)' : 'none',
-                }}
-              />
+              <span className="block h-0.5 w-5 rounded-full bg-foreground transition-all"
+                style={{ transform: open ? 'translateY(8px) rotate(45deg)' : 'none' }} />
+              <span className="block h-0.5 w-5 rounded-full bg-foreground transition-all"
+                style={{ opacity: open ? 0 : 1 }} />
+              <span className="block h-0.5 w-5 rounded-full bg-foreground transition-all"
+                style={{ transform: open ? 'translateY(-8px) rotate(-45deg)' : 'none' }} />
             </button>
           </div>
         </div>
@@ -102,55 +82,38 @@ export const Header: React.FC = () => {
 
       {/* Mobile drawer */}
       {open && (
-        <div
-          className="md:hidden fixed inset-0 z-40"
-          style={{ top: '57px' }}
-        >
-          {/* Backdrop */}
+        <div className="md:hidden fixed inset-0 z-40" style={{ top: '57px' }}>
           <div
-            className="absolute inset-0"
-            style={{ background: 'rgba(46,29,22,0.4)', backdropFilter: 'blur(2px)' }}
+            className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          {/* Panel */}
-          <div
-            className="absolute top-0 right-0 w-72 h-full px-4 py-6 overflow-y-auto"
-            style={{
-              background: 'rgba(245,241,234,0.97)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              boxShadow: '-4px 0 24px rgba(20,10,5,0.15)',
-            }}
-          >
-            {/* User info */}
+          <div className="absolute top-0 right-0 w-72 h-full px-4 py-6 overflow-y-auto bg-background/95 backdrop-blur-xl shadow-xl">
             {user && (
-              <div className="flex items-center gap-3 mb-6 px-3 py-4 rounded-2xl"
-                style={{ background: 'var(--color-khaki)' }}
-              >
-                <span
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                  style={{ background: 'var(--color-cocoa)' }}
-                >
-                  {user.name[0]}
-                </span>
+              <div className="flex items-center gap-3 mb-5 px-3 py-3 rounded-xl bg-secondary">
+                <Avatar className="w-10 h-10 flex-shrink-0">
+                  <AvatarFallback>{user.name[0]}</AvatarFallback>
+                </Avatar>
                 <div>
-                  <div className="font-semibold text-sm" style={{ color: 'var(--color-espresso)' }}>{user.name}</div>
-                  <div className="text-xs" style={{ color: 'rgba(74,52,42,0.5)' }}>Aluna</div>
+                  <div className="font-semibold text-sm text-foreground">{user.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {user.role === 'trainer' ? 'Trainer' : 'Aluna'}
+                  </div>
                 </div>
               </div>
             )}
 
             <Nav vertical onNavigate={() => setOpen(false)} />
 
-            <div style={{ borderTop: '1px solid rgba(74,52,42,0.1)' }} className="mt-4 pt-4">
-              <button
-                onClick={() => { setOpen(false); handleSignout(); }}
-                className="w-full text-left text-sm font-medium px-3 py-2.5 rounded-full transition-all hover:bg-[rgba(178,150,125,0.12)]"
-                style={{ color: 'rgba(74,52,42,0.6)' }}
-              >
-                Sair
-              </button>
-            </div>
+            <Separator className="my-4" />
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { setOpen(false); handleSignout(); }}
+              className="w-full justify-start text-muted-foreground hover:text-foreground"
+            >
+              Sair
+            </Button>
           </div>
         </div>
       )}
@@ -159,4 +122,3 @@ export const Header: React.FC = () => {
 };
 
 export default Header;
-
