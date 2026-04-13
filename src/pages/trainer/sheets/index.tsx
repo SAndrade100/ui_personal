@@ -103,7 +103,7 @@ export default function TrainerSheets() {
                   <button
                     onClick={() => handleDelete(sheet.id, sheet.title)}
                     className="text-xs px-3 py-1.5 rounded-full font-medium flex items-center gap-1"
-                    style={{ background: 'rgba(232,108,44,0.08)', color: 'var(--color-accent)' }}>
+                    style={{ background: 'rgba(34,197,94,0.08)', color: 'var(--color-accent)' }}>
                     <Trash2 size={14} /> Excluir
                   </button>
                 </div>

@@ -46,8 +46,8 @@ function WeightChart({ data, targetWeight }: { data: WeightEntry[]; targetWeight
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }} aria-label="Gráfico peso">
       <defs>
         <linearGradient id="wGradT" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#E86C2C" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#E86C2C" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
         </linearGradient>
       </defs>
       {yTicks.map(({ y, label }, i) => (
@@ -59,12 +59,12 @@ function WeightChart({ data, targetWeight }: { data: WeightEntry[]; targetWeight
       <line x1={PL} y1={targetY} x2={W - PR} y2={targetY} stroke="#B2967D" strokeWidth="1" strokeDasharray="4 3" opacity="0.6" />
       <text x={W - PR - 2} y={targetY - 4} textAnchor="end" fontSize={9} fill="#B2967D" opacity="0.8">meta {targetWeight} kg</text>
       <path d={areaPath} fill="url(#wGradT)" />
-      <path d={linePath} fill="none" stroke="#E86C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={linePath} fill="none" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       {pts.map((p, i) => (
         <g key={i}>
-          <circle cx={p.x} cy={p.y} r={4} fill="#E86C2C" />
+          <circle cx={p.x} cy={p.y} r={4} fill="var(--color-accent)" />
           {i === pts.length - 1 && (
-            <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize={11} fontWeight="bold" fill="#E86C2C">{p.value}</text>
+            <text x={p.x} y={p.y - 10} textAnchor="middle" fontSize={11} fontWeight="bold" fill="var(--color-accent)">{p.value}</text>
           )}
           {(i === 0 || i === pts.length - 1) && (
             <text x={p.x} y={PT + cH + 14} textAnchor="middle" fontSize={9} fill="rgba(74,52,42,0.45)">{fmtDate(p.date)}</text>

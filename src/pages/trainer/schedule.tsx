@@ -184,7 +184,7 @@ export default function TrainerSchedule() {
                     <button key={idx} onClick={() => setSelected(iso === selected ? null : iso)}
                       className="relative flex flex-col items-center py-1.5 rounded-xl transition-all"
                       style={{
-                        background: isSelected ? 'var(--color-accent)' : isToday ? 'rgba(232,108,44,0.12)' : daySessions.length > 0 ? 'rgba(178,150,125,0.15)' : 'transparent',
+                        background: isSelected ? 'var(--color-accent)' : isToday ? 'rgba(34,197,94,0.12)' : daySessions.length > 0 ? 'rgba(178,150,125,0.15)' : 'transparent',
                         color: isSelected ? 'white' : 'var(--color-espresso)',
                       }}>
                       <span className="text-sm font-medium">{day}</span>
@@ -245,7 +245,7 @@ export default function TrainerSchedule() {
                           </button>
                           <button onClick={() => removeSession(s.id)}
                             className="text-xs px-3 py-1 rounded-full flex items-center gap-1"
-                            style={{ background: 'rgba(232,108,44,0.08)', color: 'var(--color-accent)' }}>
+                            style={{ background: 'rgba(34,197,94,0.08)', color: 'var(--color-accent)' }}>
                             <Trash2 size={14} /> Remover
                           </button>
                         </div>

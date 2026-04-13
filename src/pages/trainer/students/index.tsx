@@ -154,13 +154,13 @@ export default function TrainerStudents() {
                         )}
                         {dormant && s.status === 'active' && (
                           <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-semibold"
-                            style={{ background: 'rgba(232,108,44,0.12)', color: 'var(--color-accent)' }}>
+                            style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--color-accent)' }}>
                             <AlertTriangle size={10} /> {daysSince(s.lastWorkout!)}d sem treinar
                           </span>
                         )}
                         {behind && (
                           <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                            style={{ background: 'rgba(232,108,44,0.12)', color: 'var(--color-accent)' }}>
+                            style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--color-accent)' }}>
                             {s.weeklyDone}/{s.weeklyGoal} treinos
                           </span>
                         )}
@@ -195,7 +195,7 @@ export default function TrainerStudents() {
                       <button
                         onClick={() => handleDelete(s.id, s.name)}
                         className="text-xs px-3 py-1.5 rounded-full font-medium"
-                        style={{ background: 'rgba(232,108,44,0.08)', color: 'var(--color-accent)' }}>
+                        style={{ background: 'rgba(34,197,94,0.08)', color: 'var(--color-accent)' }}>
                         Excluir
                       </button>
                       <Link href={`/trainer/students/${s.id}`}>

@@ -62,8 +62,8 @@ function WeightChart({ data, targetWeight }: { data: WeightEntry[]; targetWeight
     <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block' }} aria-label="Gráfico de evolução de peso">
       <defs>
         <linearGradient id="wGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#E86C2C" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#E86C2C" stopOpacity="0"    />
+          <stop offset="0%"   stopColor="var(--color-accent)" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0"    />
         </linearGradient>
       </defs>
 
@@ -86,12 +86,12 @@ function WeightChart({ data, targetWeight }: { data: WeightEntry[]; targetWeight
       <path d={areaPath} fill="url(#wGrad)" />
 
       {/* Line */}
-      <path d={linePath} fill="none" stroke="#E86C2C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={linePath} fill="none" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
       {/* Points + x labels */}
       {pts.map((p, i) => (
         <g key={i}>
-          <circle cx={p.x} cy={p.y} r={4} fill="#E86C2C" stroke="white" strokeWidth="2" />
+          <circle cx={p.x} cy={p.y} r={4} fill="var(--color-accent)" stroke="white" strokeWidth="2" />
           {i % 2 === 0 && (
             <text x={p.x} y={H - 6} textAnchor="middle" fontSize={9} fill="rgba(74,52,42,0.45)">{fmtDate(p.date)}</text>
           )}
@@ -99,7 +99,7 @@ function WeightChart({ data, targetWeight }: { data: WeightEntry[]; targetWeight
       ))}
 
       {/* Last value label */}
-      <text x={pts[pts.length - 1].x} y={pts[pts.length - 1].y - 10} textAnchor="middle" fontSize={11} fontWeight="bold" fill="#E86C2C">
+      <text x={pts[pts.length - 1].x} y={pts[pts.length - 1].y - 10} textAnchor="middle" fontSize={11} fontWeight="bold" fill="var(--color-accent)">
         {pts[pts.length - 1].value} kg
       </text>
     </svg>
@@ -138,12 +138,12 @@ function WeeklyChart({ data }: { data: WeekEntry[] }) {
         const x = PL + i * slotW + (slotW - barW) / 2;
         const y = PT + cH - barH;
         const isLast = i === data.length - 1;
-        const fill = isLast ? '#E86C2C' : '#B2967D';
+        const fill = isLast ? 'var(--color-accent)' : '#B2967D';
         return (
           <g key={i}>
             <rect x={x} y={y} width={barW} height={barH} rx={4} fill={fill} opacity={isLast ? 1 : 0.65} />
-            <text x={x + barW / 2} y={y - 4} textAnchor="middle" fontSize={10} fontWeight="bold"
-              fill={isLast ? '#E86C2C' : 'rgba(255,255,255,0.45)'}>
+              <text x={x + barW / 2} y={y - 4} textAnchor="middle" fontSize={10} fontWeight="bold"
+              fill={isLast ? 'var(--color-accent)' : 'rgba(255,255,255,0.45)'}>
               {d.count}
             </text>
             <text x={x + barW / 2} y={H - PB + 16} textAnchor="middle" fontSize={9} fill="rgba(255,255,255,0.3)">
@@ -235,7 +235,7 @@ export default function Progress() {
             {data && (
               <div className="flex items-center gap-3 text-sm">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full" style={{ background: '#E86C2C' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ background: 'var(--color-accent)' }} />
                   <span style={{ color: 'rgba(74,52,42,0.6)' }}>Peso atual</span>
                 </span>
                 <span className="flex items-center gap-1.5">
@@ -272,7 +272,7 @@ export default function Progress() {
             {data && (
               <div
                 className="rounded-full px-3 py-1 text-xs font-semibold"
-                style={{ background: 'rgba(232,108,44,0.2)', color: '#E86C2C' }}
+                style={{ background: 'rgba(34,197,94,0.2)', color: 'var(--color-accent)' }}
               >
                 Média: {data.weeklyWorkouts.length > 0 ? (data.weeklyWorkouts.reduce((s, w) => s + w.count, 0) / data.weeklyWorkouts.length).toFixed(1) : '0'}× / sem
               </div>
@@ -316,7 +316,7 @@ export default function Progress() {
                   <div className="flex items-center gap-2 mt-1.5">
                     <span
                       className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                      style={{ background: 'rgba(232,108,44,0.12)', color: 'var(--color-accent)' }}
+                      style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--color-accent)' }}
                     >
                       {rec.improvement}
                     </span>

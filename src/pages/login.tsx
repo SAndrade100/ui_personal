@@ -40,8 +40,8 @@ export default function Login() {
       <div className="hidden md:flex flex-col justify-between w-5/12 p-12 bg-hero">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-accent" />
-            <span className="text-white text-xl font-bold font-heading">Bia Personal</span>
+            <img src="/logo.jpeg" alt="ANA PERSONAL" className="w-10 h-10 rounded-lg object-cover" />
+            <span className="text-white text-xl font-bold font-heading">ANA PERSONAL</span>
           </div>
           <div className="text-white/50 text-xs mt-1 ml-5">Training Studio</div>
         </div>
@@ -59,7 +59,7 @@ export default function Login() {
           </div>
         </div>
 
-        <div className="text-white/30 text-xs">© 2026 Bia Personal</div>
+        <div className="text-white/30 text-xs">© 2026 ANA PERSONAL</div>
       </div>
 
       {/* ── Right form panel ── */}
@@ -67,8 +67,8 @@ export default function Login() {
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="md:hidden flex items-center gap-2 mb-10 justify-center">
-            <span className="w-2.5 h-2.5 rounded-full bg-accent" />
-            <span className="text-xl font-bold font-heading">Bia Personal</span>
+            <img src="/logo.jpeg" alt="ANA PERSONAL" className="w-10 h-10 rounded-lg object-cover" />
+            <span className="text-xl font-bold font-heading">ANA PERSONAL</span>
           </div>
 
           <Card className="border-0 shadow-none bg-transparent">

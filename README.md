@@ -1,4 +1,4 @@
-# Bia Personal (mocked UI)
+# ANA PERSONAL (mocked UI)
 
 Projeto Next.js + TypeScript com telas mockadas para um app de personal trainer. Inclui Tailwind CSS (configurada), tokens de cores, MSW para mocks de API e telas: login, home aluno, busca de treinos, agenda e execução de treino.
 

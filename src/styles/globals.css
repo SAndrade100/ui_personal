@@ -7,33 +7,33 @@
 @layer base {
   :root {
     /* ── shadcn/ui semantic tokens (HSL channels, sem hsl()) ── */
-    --background:  38 36% 94%;   /* linen   #F5F1EA */
-    --foreground:  17 29% 23%;   /* espresso #4A342A */
+    --background:  120 18% 95%;   /* linen   #EFF4EE */
+    --foreground:  120 35% 14%;   /* espresso #163216 */
 
     --card:             0 0% 100%;
-    --card-foreground:  17 29% 23%;
+    --card-foreground:  120 35% 14%;
 
     --popover:          0 0% 100%;
-    --popover-foreground: 17 29% 23%;
+    --popover-foreground: 120 35% 14%;
 
-    --primary:          26 29% 60%;   /* camel  #B2967D */
+    --primary:          120 31% 42%;   /* camel (forest green) #49894A */
     --primary-foreground: 0 0% 100%;
 
-    --secondary:        36 27% 78%;   /* khaki  #D7C9B8 */
-    --secondary-foreground: 17 29% 23%;
+    --secondary:        118 22% 76%;   /* khaki (sage) #B5CEB0 */
+    --secondary-foreground: 120 35% 14%;
 
-    --muted:            36 27% 88%;
-    --muted-foreground: 17 18% 42%;
+    --muted:            120 20% 88%;
+    --muted-foreground: 120 12% 40%;
 
-    --accent:           22 79% 54%;   /* laranja #E86C2C */
+    --accent:           142 71% 45%;   /* vivid green #22C55E */
     --accent-foreground: 0 0% 100%;
 
     --destructive:      0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 36 25% 82%;
-    --input:  36 25% 82%;
-    --ring:   26 29% 60%;
+    --border: 120 18% 80%;
+    --input:  120 18% 80%;
+    --ring:   120 31% 42%;
 
     --radius: 0.75rem;
   }

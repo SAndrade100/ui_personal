@@ -8,10 +8,8 @@ const studentLinks = [
   { href: '/student',     label: 'Home',       exact: true  },
   { href: '/trainings',  label: 'Treinos',    exact: false },
   { href: '/schedule',   label: 'Agenda',     exact: true  },
-  { href: '/nutrition',  label: 'Nutrição',   exact: false },
   { href: '/progress',   label: 'Progresso',  exact: true  },
   { href: '/assessment', label: 'Avaliação',  exact: true  },
-  { href: '/chat',       label: 'Chat',       exact: true  },
   { href: '/anamnesis',  label: 'Anamnese',   exact: true  },
   { href: '/profile',    label: 'Perfil',     exact: true  },
 ];
@@ -22,7 +20,6 @@ const trainerLinks = [
   { href: '/trainer/trainings',label: 'Treinos',   exact: false },
   { href: '/trainer/sheets',   label: 'Fichas',    exact: false },
   { href: '/trainer/schedule', label: 'Agenda',    exact: true  },
-  { href: '/trainer/chat',     label: 'Chat',      exact: true  },
 ];
 
 type Props = { vertical?: boolean; onNavigate?: () => void };

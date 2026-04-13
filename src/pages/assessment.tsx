@@ -49,7 +49,7 @@ function CompareBar({ label, values, dates, unit, lowerIsBetter = false }:
     <div>
       <div className="flex items-center justify-between text-xs mb-1.5" style={{ color: 'rgba(74,52,42,0.65)' }}>
         <span className="font-semibold">{label}</span>
-        <span className="font-bold" style={{ color: improved ? '#22c55e' : '#E86C2C' }}>
+        <span className="font-bold" style={{ color: improved ? '#22c55e' : 'var(--color-accent)' }}>
           {delta > 0 ? '+' : ''}{delta.toFixed(1)} {unit}
         </span>
       </div>
@@ -236,10 +236,10 @@ export default function Assessment() {
                     <div className="text-2xl font-bold mb-1" style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-espresso)' }}>
                       {last} {unit}
                     </div>
-                    <div className="text-xs font-semibold mb-3" style={{ color: improved ? '#22c55e' : '#E86C2C' }}>
+                    <div className="text-xs font-semibold mb-3" style={{ color: improved ? '#22c55e' : 'var(--color-accent)' }}>
                       {delta > 0 ? '+' : ''}{delta.toFixed(1)} {unit} desde o início
                     </div>
-                    <TrendLine values={vals} color={improved ? '#22c55e' : '#E86C2C'} />
+                    <TrendLine values={vals} color={improved ? '#22c55e' : 'var(--color-accent)'} />
                   </div>
                 );
               })}

@@ -29,9 +29,13 @@ export const Header: React.FC = () => {
 
           {/* Logo */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-accent" aria-hidden />
+            <img
+              src="/logo.jpeg"
+              alt="Ana Personal logo"
+              className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
+            />
             <span className="text-lg md:text-xl font-bold font-heading tracking-tight">
-              Bia Personal
+              ANA PERSONAL
             </span>
           </div>
 

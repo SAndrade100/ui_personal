@@ -56,7 +56,7 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        heading: ['Playfair Display', 'serif'],
+        heading: ['Oswald', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
       },
       keyframes: {

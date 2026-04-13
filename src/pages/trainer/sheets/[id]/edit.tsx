@@ -185,7 +185,7 @@ export default function TrainerSheetEdit() {
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-semibold text-sm">{displayTitle}</span>
                     <button onClick={() => removeDay(idx)} className="p-1 rounded-lg transition-all"
-                      style={{ color: 'rgba(232,108,44,0.7)', background: 'rgba(232,108,44,0.08)' }}>
+                      style={{ color: 'rgba(34,197,94,0.7)', background: 'rgba(34,197,94,0.08)' }}>
                       <Trash2 size={16} />
                     </button>
                   </div>

@@ -165,7 +165,7 @@ export default function Schedule() {
                       background: isSelected
                         ? 'linear-gradient(135deg, var(--color-hero-from), var(--color-hero-to))'
                         : isToday
-                          ? 'rgba(232,108,44,0.15)'
+                          ? 'rgba(34,197,94,0.15)'
                           : 'transparent',
                       border: isToday && !isSelected ? '1.5px solid var(--color-accent)' : '1.5px solid transparent',
                     }}

@@ -11,7 +11,9 @@ type Exercise = { id: string; name: string; reps: string; rest: string };
 type Training = { id: string; title: string; duration: number; level: string; category: string; exercises: Exercise[] };
 
 const levelColor: Record<string, string> = {
-  Beginner: '#22c55e', Intermediate: '#f59e0b', Advanced: '#E86C2C',
+  Beginner: '#22c55e',
+  Intermediate: 'var(--color-accent)',
+  Advanced: 'var(--color-accent)',
 };
 const categoryIcon: Record<string, LucideIcon> = {
   'Full Body': Dumbbell, HIIT: Flame, Força: Dumbbell, Pernas: PersonStanding, Funcional: Zap,
@@ -87,7 +89,7 @@ export default function TrainerTrainings() {
                   <div className="flex items-center gap-2 flex-wrap mb-0.5">
                     <span className="font-bold">{t.title}</span>
                     <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                      style={{ background: `${levelColor[t.level]}22`, color: levelColor[t.level] }}>
+                      style={{ background: t.level === 'Advanced' ? 'rgba(34,197,94,0.14)' : `${levelColor[t.level]}22`, color: levelColor[t.level] }}>
                       {t.level}
                     </span>
                     <span className="text-xs px-2 py-0.5 rounded-full"
@@ -112,7 +114,7 @@ export default function TrainerTrainings() {
                   <button
                     onClick={() => handleDelete(t.id, t.title)}
                     className="text-xs px-3 py-1.5 rounded-full font-medium flex items-center gap-1"
-                    style={{ background: 'rgba(232,108,44,0.08)', color: 'var(--color-accent)' }}>
+                    style={{ background: 'rgba(34,197,94,0.08)', color: 'var(--color-accent)' }}>
                     <Trash2 size={14} /> Excluir
                   </button>
                 </div>

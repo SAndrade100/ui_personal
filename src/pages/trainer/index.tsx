@@ -5,7 +5,7 @@ import Card from '../../components/Card';
 import { Button } from '../../components/Button';
 import { apiFetch } from '../../lib/api';
 import { useRequireAuth } from '../../lib/auth';
-import { Calendar, Dumbbell, MessageCircle, Users, Flame, AlertTriangle } from 'lucide-react';
+import { Calendar, Dumbbell, Users, Flame, AlertTriangle } from 'lucide-react';
 
 type Student = {
   id: string; name: string; avatar: string; status: string;
@@ -18,7 +18,7 @@ type Student = {
 function ProgressBar({ start, current, target }: { start: number; current: number; target: number }) {
   const pct = Math.min(100, Math.max(0, ((start - current) / (start - target)) * 100));
   return (
-    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(74,52,42,0.1)' }}>
+    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(22,50,22,0.1)' }}>
       <div className="h-full rounded-full" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, var(--color-camel), var(--color-accent))' }} />
     </div>
   );
@@ -27,7 +27,7 @@ function ProgressBar({ start, current, target }: { start: number; current: numbe
 function AlertBadge({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
-      style={{ background: 'rgba(232,108,44,0.12)', color: 'var(--color-accent)' }}>
+      style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--color-accent)' }}>
       {children}
     </span>
   );
@@ -99,7 +99,7 @@ export default function TrainerDashboard() {
 
         {/* Alerts */}
         {atRisk.length > 0 && (
-          <div className="rounded-card p-5" style={{ background: 'rgba(232,108,44,0.08)', border: '1px solid rgba(232,108,44,0.2)' }}>
+          <div className="rounded-card p-5" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
             <p className="text-xs font-semibold tracking-widest mb-3 flex items-center gap-1.5" style={{ color: 'var(--color-accent)' }}>
               <AlertTriangle size={14} /> ALUNOS QUE PRECISAM DE ATENÇÃO
             </p>
@@ -196,7 +196,6 @@ export default function TrainerDashboard() {
             {[
               { label: 'Agenda',       href: '/trainer/schedule',  Icon: Calendar },
               { label: 'Treinos',      href: '/trainer/trainings', Icon: Dumbbell },
-              { label: 'Chat',         href: '/trainer/chat',      Icon: MessageCircle },
               { label: 'Alunos',       href: '/trainer/students',  Icon: Users },
             ].map(({ label, href, Icon }) => (
               <Link key={href} href={href}>

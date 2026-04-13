@@ -134,7 +134,7 @@ export default function Anamnesis() {
             </div>
             <div>
               <p className="text-xs font-semibold mb-2" style={{ color: 'rgba(74,52,42,0.5)' }}>LESÕES</p>
-              {data.physicalActivity.injuries.length > 0 ? <TagList items={data.physicalActivity.injuries} color="#E86C2C" /> : <span className="text-sm" style={{ color: 'rgba(74,52,42,0.35)' }}>Nenhuma</span>}
+              {data.physicalActivity.injuries.length > 0 ? <TagList items={data.physicalActivity.injuries} color="var(--color-accent)" /> : <span className="text-sm" style={{ color: 'rgba(74,52,42,0.35)' }}>Nenhuma</span>}
             </div>
           </div>
         </Section>
@@ -147,7 +147,7 @@ export default function Anamnesis() {
             <Row label="Habilidade culinária" value={data.dietaryProfile.mealPrepSkill} />
             <div>
               <p className="text-xs font-semibold mb-2" style={{ color: 'rgba(74,52,42,0.5)' }}>ALIMENTOS EVITADOS</p>
-              <TagList items={data.dietaryProfile.avoidedFoods} color="#E86C2C" />
+              <TagList items={data.dietaryProfile.avoidedFoods} color="var(--color-accent)" />
             </div>
             <div>
               <p className="text-xs font-semibold mb-2" style={{ color: 'rgba(74,52,42,0.5)' }}>ALIMENTOS PREFERIDOS</p>

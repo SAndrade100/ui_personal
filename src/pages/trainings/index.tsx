@@ -8,8 +8,8 @@ type Training = { id: string; title: string; duration: number; level: string };
 
 const levelColor: Record<string, string> = {
   Beginner: 'rgba(255,255,255,0.15)',
-  Intermediate: 'rgba(232,108,44,0.3)',
-  Advanced: 'rgba(200,60,30,0.35)',
+  Intermediate: 'var(--color-accent)',
+    Advanced: 'var(--color-accent)',
 };
 
 export default function Trainings() {

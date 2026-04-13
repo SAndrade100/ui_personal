@@ -203,7 +203,7 @@ export default function TrainerNutritionEdit() {
               </div>
               <button onClick={() => removeMeal(mi)}
                 className="text-xs px-3 py-1.5 rounded-full font-medium"
-                style={{ color: 'var(--color-accent)', background: 'rgba(232,108,44,0.08)' }}>
+                style={{ color: 'var(--color-accent)', background: 'rgba(34,197,94,0.08)' }}>
                 Remover
               </button>
             </div>
@@ -230,7 +230,7 @@ export default function TrainerNutritionEdit() {
                   ))}
                   <button onClick={() => removeItem(mi, ii)}
                     className="w-7 h-7 flex items-center justify-center rounded-lg"
-                    style={{ color: 'rgba(232,108,44,0.7)', background: 'rgba(232,108,44,0.08)' }}
+                    style={{ color: 'rgba(34,197,94,0.7)', background: 'rgba(34,197,94,0.08)' }}
                     aria-label="Remover alimento">
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
                   </button>
